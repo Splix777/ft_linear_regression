@@ -5,8 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="98c8e706-ea65-4101-b752-988141645791" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,11 +34,11 @@
                 <list>
                   <RecentBranch>
                     <option name="branchName" value="main" />
-                    <option name="lastUsedInstant" value="1710848111" />
+                    <option name="lastUsedInstant" value="1710849115" />
                   </RecentBranch>
                   <RecentBranch>
-                    <option name="branchName" value="master" />
-                    <option name="lastUsedInstant" value="1710848110" />
+                    <option name="branchName" value="test_branch" />
+                    <option name="lastUsedInstant" value="1710849097" />
                   </RecentBranch>
                 </list>
               </option>
@@ -146,7 +146,7 @@
       <workItem from="1710845207367" duration="254000" />
       <workItem from="1710845472143" duration="590000" />
       <workItem from="1710846069482" duration="1479000" />
-      <workItem from="1710847557860" duration="1374000" />
+      <workItem from="1710847557860" duration="1754000" />
     </task>
     <servers />
   </component>
