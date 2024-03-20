@@ -11,7 +11,7 @@ install:
 	@echo "Installing python packages"
 	@. .venv/bin/activate; pip install -r requirements.txt
 
-run:
+run: venv install
 	@echo "Running python script"
 	@. .venv/bin/activate; python3 main.py
 
