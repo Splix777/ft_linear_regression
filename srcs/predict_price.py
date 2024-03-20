@@ -37,7 +37,7 @@ def predict_price(theta0, theta1, mileage):
     return theta0 + theta1 * mileage
 
 
-@error_decorator(debug=True)
+@error_decorator(debug=False)
 def main():
     load_dotenv()
 

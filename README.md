@@ -5,8 +5,8 @@ This project is an introduction to the machine learning field. It is a simple li
 
 ## Usage
 ```sh
-python3 predict_price.py
-python3 train.py
+python3 srcs/predict_price.py
+python3 srcs/train.py
 ```
 
 ## Installation

@@ -16,9 +16,6 @@ def train_linear_regression(data):
     Returns:
         tuple: A tuple containing the trained parameters theta0 and theta1.
     """
-    theta0 = 0
-    theta1 = 0
-
     mean_mileage = data['km'].mean()
     mean_price = data['price'].mean()
 
