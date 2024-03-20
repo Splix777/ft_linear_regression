@@ -1,5 +1,5 @@
 all:
-	@echo "Usage: make python|venv|install|run|clean|test|fclean"
+	@echo "Usage: make python|venv|install|run|clean|test"
 
 python: venv install
 
@@ -23,9 +23,4 @@ test:
 	@echo "Running python tests"
 	@. .venv/bin/activate; python3 -m unittest discover -s tests -p "*_test.py"
 
-fclean: clean
-	@echo "Cleaning python cache"
-	@find . -type d -name __pycache__ -exec rm -rf {} \;
-	@find . -type f -name '*.pyc' -exec rm -f {} \;
-
-.PHONY: all python venv install run clean test fclean
+.PHONY: all python venv install run clean test
