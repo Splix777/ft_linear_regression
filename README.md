@@ -5,8 +5,8 @@ This project is an introduction to the machine learning field. It is a simple li
 
 ## Usage
 ```sh
+python3 predict_price.py
 python3 train.py
-python3 predict.py
 ```
 
 ## Installation
@@ -16,4 +16,3 @@ pip3 install -r requirements.txt
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
-```

@@ -1,6 +1,9 @@
 # IDE
 .idea/
 .vscode
+*.log
+logs/
+*.iml
 
 # Python
 __pycache__/
