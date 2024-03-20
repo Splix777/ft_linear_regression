@@ -42,7 +42,7 @@ def save_parameters(theta0, theta1, file_path):
 
 
 @error_decorator(debug=False)
-def main():
+def train():
     load_dotenv()
     csv_path = Path(__file__).parent.parent / os.getenv("CSV_PATH")
     data = pd.read_csv(csv_path)
@@ -54,4 +54,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    train()
