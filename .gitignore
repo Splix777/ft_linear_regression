@@ -27,3 +27,6 @@ __pycache__/
 # Python Installer
 pip-log.txt
 pip-delete-this-directory.txt
+
+#PDFs
+*.pdf
