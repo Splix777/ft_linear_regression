@@ -7,6 +7,9 @@ logs/
 
 # Python
 __pycache__/
+*.pyc
+*.pyo
+*.pyd
 
 # Jupyter Notebook
 .ipynb_checkpoints
@@ -19,3 +22,8 @@ __pycache__/
 
 # Git
 .gitignore
+.gitattributes
+
+# Python Installer
+pip-log.txt
+pip-delete-this-directory.txt
