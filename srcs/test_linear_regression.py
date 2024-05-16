@@ -4,7 +4,6 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 from train_model_class import DataAnalysisClass
 from linear_regression_predictor import LinearRegressionPredictor
-from matplotlib import MatplotlibDeprecationWarning
 
 warnings.filterwarnings(action="ignore", category=DeprecationWarning)
 
