@@ -43,5 +43,6 @@ fclean:
 	docker volume prune -f
 	docker network prune -f
 	-docker volume ls -qf dangling=true | xargs -r docker volume rm
+	rm -rf .venv
 
 .PHONY: all python venv install run clean test
