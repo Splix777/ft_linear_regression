@@ -2,11 +2,17 @@ import pickle
 
 
 class LinearRegressionPredictor:
-    def __init__(self, model_path):
+    def __init__(self, model_path: str) -> None:
+        """
+        Load a linear regression model from a pickle file.
+        """
         self.model_path = model_path
         self.__load_model()
 
-    def __load_model(self):
+    def __load_model(self) -> None:
+        """
+        Load the model from the pickle file.
+        """
         try:
             with open(self.model_path, 'rb') as f:
                 data = pickle.load(f)
@@ -17,7 +23,10 @@ class LinearRegressionPredictor:
         self.mean_km = data["mean_km"]
         self.std_km = data["std_km"]
 
-    def predict(self, km: int):
+    def predict(self, km: int) -> float:
+        """
+        Predict the price of a car given its kilometers.
+        """
         if not isinstance(km, int) or km < 0 or km > 1_000_000:
             raise ValueError("Please enter a number between 0 and 1_000_000")
         price = (self.theta[0] * (km - self.mean_km)
@@ -25,7 +34,16 @@ class LinearRegressionPredictor:
         return round(price, 2)
 
 
-def get_user_input():
+def get_user_input() -> int:
+    """
+    Get user input for the kilometers of the car.
+
+    Returns:
+        int: The kilometers of the car.
+
+    Raises:
+        ValueError: If the input is not a valid number.
+    """
     km = 0
     try:
         print('Please input your cars kilometers to get a price estimate.',

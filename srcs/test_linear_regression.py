@@ -9,7 +9,13 @@ warnings.filterwarnings(action="ignore", category=DeprecationWarning)
 
 
 class TestLinearRegression(unittest.TestCase):
-    def setUp(self):
+    """
+    A class for testing the linear regression model and predictor.
+    """
+    def setUp(self) -> None:
+        """
+        Set up test data and objects.
+        """
         self.data_path = '/home/splix/Desktop/ft_linear_regression/csv_files/'
         self.data_csv = 'data.csv'
         self.pkl_pth = '/home/splix/Desktop/ft_linear_regression/pickle_files/'
@@ -30,7 +36,10 @@ class TestLinearRegression(unittest.TestCase):
             self.pkl_pth + self.pickle_model)
         self.km_list = list(range(0, 1_000_000, 10_000))
 
-    def test_custom_model(self):
+    def test_custom_model(self) -> None:
+        """
+        Test the custom linear regression model against sklearn.
+        """
         for km in self.km_list:
             with self.subTest(km=km):
                 custom_model = self.predictor.predict(km)
@@ -44,7 +53,10 @@ class TestLinearRegression(unittest.TestCase):
                     sklearn_model,
                     decimal=1)
 
-    def test_error_handling(self):
+    def test_error_handling(self) -> None:
+        """
+        Test error handling of predictor.
+        """
         with self.assertRaises(ValueError):
             self.predictor.predict(-1)
         with self.assertRaises(ValueError):
@@ -52,7 +64,10 @@ class TestLinearRegression(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.predictor.predict('a')
 
-    def tearDown(self):
+    def tearDown(self) -> None:
+        """
+        Clean up after each test.
+        """
         pass
 
 

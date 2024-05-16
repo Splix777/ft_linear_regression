@@ -5,8 +5,37 @@ import matplotlib.pyplot as plt
 
 
 class DataAnalysisClass:
-    def __init__(self, data_dir, csv_file, pickle_path, pickle_model,
-                 bonus=False, learning_rate=0.01, iterations=1500):
+    """
+    A class to perform data analysis and linear regression.
+
+    Attributes:
+        data_path (str): The directory path where the data file is located.
+        data_csv (str): The filename of the CSV data file.
+        pickle_path (str): The dir path where the pickle file will be saved.
+        pickle_model (str): The filename of the pickle model.
+        bonus (bool): Flag indicating whether to include bonus features.
+        alpha (float): The learning rate for gradient descent.
+        iter (int): The number of iterations for gradient descent.
+        theta (numpy.ndarray): The parameters for the linear regression model.
+        losses (list): List to store the loss values during training.
+        biases (list): List to store the bias values during training.
+        weights (list): List to store the weight values during training.
+    """
+    def __init__(self, data_dir: str, csv_file: str, pickle_path: str,
+                 pickle_model: str, bonus: bool = False,
+                 learning_rate: float = 0.01, iterations: int = 1500):
+        """
+        Initializes the DataAnalysisClass.
+
+        Args:
+            data_dir (str): The directory path where the data file is located.
+            csv_file (str): The filename of the CSV data file.
+            pickle_path (str): Dir path where the pickle file will be saved.
+            pickle_model (str): The filename of the pickle model.
+            bonus (bool, optional): Flag indicating whether to include bonus.
+            learning_rate (float, optional): Learning rate gradient descent.
+            iterations (int, optional): Iterations for gradient descent.
+        """
         self.data_path = data_dir
         self.data_csv = csv_file
         self.pickle_path = pickle_path
@@ -21,7 +50,10 @@ class DataAnalysisClass:
         self.__save_model()
         self.__plot_data()
 
-    def __load_data(self):
+    def __load_data(self) -> None:
+        """
+        Loads the data from the CSV file.
+        """
         try:
             self.data = pd.read_csv(self.data_path + self.data_csv)
         except FileNotFoundError as e:
@@ -35,7 +67,11 @@ class DataAnalysisClass:
         if len(self.km) < 2 or len(self.price) < 2:
             raise ValueError("Not enough data to train the model")
 
-    def __standardize_data(self):
+    def __standardize_data(self) -> None:
+        """
+        Standardizes the data by calculating mean
+        and standard deviation of kilometers.
+        """
         try:
             self.mean_km = np.mean(self.km)
             self.std_km = np.std(self.km)
@@ -44,14 +80,51 @@ class DataAnalysisClass:
             raise ZeroDivisionError("Division by zero") from e
 
     @staticmethod
-    def __hypothesis(theta, x):
+    def __hypothesis(theta: np.ndarray, x: np.ndarray) -> np.ndarray:
+        """
+        Calculates the hypothesis of the linear regression model.
+
+        Args:
+            theta (numpy.ndarray): Linear regression model.
+            x (numpy.ndarray): The input features.
+
+        Returns:
+            numpy.ndarray: The predicted values.
+        """
         return np.dot(x, theta)
 
-    def __cost_function(self, theta, x, y):
+    def __cost_function(self, theta: np.ndarray, x: np.ndarray,
+                        y: np.ndarray) -> float:
+        """
+        Calculates the cost function for linear regression.
+
+        Args:
+            theta (numpy.ndarray): Linear regression model.
+            x (numpy.ndarray): The input features.
+            y (numpy.ndarray): The target values.
+
+        Returns:
+            float: The cost value.
+        """
         m = len(y)
         return np.sum((self.__hypothesis(theta, x) - y) ** 2) / (2 * m)
 
-    def __gradient_descent(self, theta, x, y, alpha=0.01, iter=1500):
+    def __gradient_descent(self, theta: np.ndarray, x: np.ndarray,
+                           y: np.ndarray, alpha: float = 0.01,
+                           iter: int = 1500) -> np.ndarray:
+        """
+        Performs gradient descent to optimize the parameters.
+
+        Args:
+            theta (numpy.ndarray): Theta values.
+            x (numpy.ndarray): The input features.
+            y (numpy.ndarray): The target values.
+            alpha (float, optional): The learning rate. Defaults to 0.01.
+            iter (int, optional): The number of iterations. Defaults to 1500.
+
+        Returns:
+            numpy.ndarray: The optimized parameters.
+        """
         m = len(y)
         for _ in range(iter):
             hypothesis = self.__hypothesis(theta, x)
@@ -60,7 +133,10 @@ class DataAnalysisClass:
             theta = theta - alpha * gradient
         return theta
 
-    def __train_dataset(self):
+    def __train_dataset(self) -> None:
+        """
+        Trains the linear regression model using gradient descent.
+        """
         self.losses = []
         self.biases = []
         self.weights = []
@@ -79,7 +155,10 @@ class DataAnalysisClass:
 
         self.theta = theta
 
-    def __save_model(self):
+    def __save_model(self) -> None:
+        """
+        Saves the trained model parameters to a pickle file.
+        """
         try:
             with open(self.pickle_path + self.pickle_model, 'wb') as f:
                 data_to_save = {"theta": self.theta,
@@ -89,7 +168,10 @@ class DataAnalysisClass:
         except FileNotFoundError as e:
             raise FileNotFoundError(f"{self.pickle_path} not found") from e
 
-    def __plot_data(self):
+    def __plot_data(self) -> None:
+        """
+        Plots the data points and the linear regression line.
+        """
         plt.scatter(self.km, self.price, color='blue')
         plt.plot(
             self.km,
