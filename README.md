@@ -97,3 +97,30 @@ In the context of a machine learning algorithm, precision generally refers to ho
 - Hyperparameter Tuning: Adjusting hyperparameters (e.g., learning rate, number of iterations) in the gradient descent algorithm can improve precision.
 
 
+#### Mean Absolute Error (MAE)
+MAE is the average absolute difference between the predicted and actual values. This means that on average, your predictions are off by about 557.84 units of the target variable. Depending on the context and the scale of your data, this could be acceptable or it might indicate room for improvement.
+
+#### Mean Squared Error (MSE)
+MSE is the average of the squared differences between the predicted and actual values. MSE gives more weight to larger errors. The value seems high, but the interpretation depends on the scale of your data. If the target variable (price) has a large range, a higher MSE is expected.
+
+#### R-squared (R²) Score
+R² represents the proportion of the variance in the dependent variable that is predictable from the independent variable(s). An R² of 0.733 indicates that approximately 73.3% of the variance in the price can be explained by the kilometers. This is a relatively good fit, especially for real-world data, where an R² above 0.7 is often considered quite acceptable.
+
+
+#### What is the significance of the R-squared value?
+The R-squared value is a statistical measure that represents the proportion of the variance in the dependent variable that is predictable from the independent variable(s). In the context of linear regression, the R-squared value indicates how well the model fits the data. A higher R-squared value indicates a better fit, while a lower R-squared value indicates a poorer fit.
+
+
+#### Key Features of a Residuals Plot
+1. Residuals are randomly scattered around the horizontal axis: This indicates that the linear regression model is capturing the underlying patterns in the data.
+2. Residuals are centered around zero: This indicates that the model is not systematically overestimating or underestimating the target variable.
+3. Residuals are homoscedastic: This means that the variance of the residuals is constant across all levels of the target variable. If the residuals exhibit a pattern (e.g., a funnel shape), this indicates heteroscedasticity, which may suggest that the model is not appropriate for the data.
+
+#### Interpretation of Residuals Plot
+- Random Scatter: A random scatter of residuals around the horizontal axis indicates that the linear regression model is capturing the underlying patterns in the data.
+- Centered Residuals: Residuals centered around zero indicate that the model is not systematically overestimating or underestimating the target variable.
+- Homoscedastic Residuals: Homoscedastic residuals suggest that the variance of the residuals is constant across all levels of the target variable, indicating that the model is appropriate for the data.
+- Heteroscedastic Residuals: Heteroscedastic residuals, characterized by a pattern (e.g., a funnel shape), suggest that the model may not be appropriate for the data, potentially requiring further investigation or model adjustments.
+---
+- Good Sign: A residuals plot with random scatter, centered residuals, and homoscedastic residuals is a good sign that the linear regression model is suitable for the data.
+- Bad Sign: A residuals plot with non-random scatter, non-centered residuals, or heteroscedastic residuals may indicate issues with the model's fit to the data, requiring further analysis or model refinement.
