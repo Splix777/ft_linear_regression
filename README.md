@@ -98,10 +98,10 @@ In the context of a machine learning algorithm, precision generally refers to ho
 
 
 #### Mean Absolute Error (MAE)
-MAE is the average absolute difference between the predicted and actual values. This means that on average, your predictions are off by about 557.84 units of the target variable. Depending on the context and the scale of your data, this could be acceptable or it might indicate room for improvement.
+MAE is the average absolute difference between the predicted and actual values. It provides a measure of the model's accuracy without considering the direction of the errors.
 
 #### Mean Squared Error (MSE)
-MSE is the average of the squared differences between the predicted and actual values. MSE gives more weight to larger errors. The value seems high, but the interpretation depends on the scale of your data. If the target variable (price) has a large range, a higher MSE is expected.
+MSE is the average of the squared differences between the predicted and actual values. It penalizes larger errors more than MAE, making it sensitive to outliers.
 
 #### R-squared (R²) Score
 R² represents the proportion of the variance in the dependent variable that is predictable from the independent variable(s). An R² of 0.733 indicates that approximately 73.3% of the variance in the price can be explained by the kilometers. This is a relatively good fit, especially for real-world data, where an R² above 0.7 is often considered quite acceptable.
