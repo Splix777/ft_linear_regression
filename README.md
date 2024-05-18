@@ -1,7 +1,7 @@
 <h1 align="center">ft_linear_regression</h1>
 
 <p align="center">
-  <img src="images/linear_regression.png" alt="Your Image" width="300" height="200">
+  <img src="images/training_animation.gif" alt="Your Image" width="50%">
 </p>
 
 ## An introduction to machine learning
@@ -19,7 +19,7 @@ We will work on a precise example for the project, but once you’re done you wi
 
 ### General Instructions
 - You must create a program that predicts the price of a car by using a linear function.
-- You are free to use any libraries you want as long as you can explain your choice and they don't do all the work for you. For example, the use of Python's `numpy.polyfit` is considered cheating.
+- You are free to use any libraries you want as long as you can explain your choice, and they don't do all the work for you. For example, the use of Python's `numpy.polyfit` is considered cheating.
 - You should use a language that you are comfortable with; the whole project must be written in the same language.
 
 ### Mandatory part
@@ -69,6 +69,7 @@ In mathematics, the term linear function refers to two distinct but related noti
 
 We will use a scatter plot to visualize the data. A scatter plot is a type of plot or mathematical diagram using Cartesian coordinates to display values for typically two variables for a set of data. If the points are coded (color/shape/size), one additional variable can be displayed. The data are displayed as a collection of points, each having the value of one variable determining the position on the horizontal axis and the value of the other variable determining the position on the vertical axis.
 
+![Scatter Plot](images/my_linear.png)
 
 #### How are we Visualizing the linear regression?
 
@@ -116,6 +117,8 @@ The R-squared value is a statistical measure that represents the proportion of t
 2. Residuals are centered around zero: This indicates that the model is not systematically overestimating or underestimating the target variable.
 3. Residuals are homoscedastic: This means that the variance of the residuals is constant across all levels of the target variable. If the residuals exhibit a pattern (e.g., a funnel shape), this indicates heteroscedasticity, which may suggest that the model is not appropriate for the data.
 
+![Residuals Plot](images/my_residuals.png)
+
 #### Interpretation of Residuals Plot
 - Random Scatter: A random scatter of residuals around the horizontal axis indicates that the linear regression model is capturing the underlying patterns in the data.
 - Centered Residuals: Residuals centered around zero indicate that the model is not systematically overestimating or underestimating the target variable.
@@ -124,3 +127,12 @@ The R-squared value is a statistical measure that represents the proportion of t
 ---
 - Good Sign: A residuals plot with random scatter, centered residuals, and homoscedastic residuals is a good sign that the linear regression model is suitable for the data.
 - Bad Sign: A residuals plot with non-random scatter, non-centered residuals, or heteroscedastic residuals may indicate issues with the model's fit to the data, requiring further analysis or model refinement.
+
+---
+
+#### Theta0 Theta1 over Iterations
+
+The plot shows how the values of theta0 and theta1 change over the iterations of the gradient descent algorithm. The x-axis represents the number of iterations, while the y-axis represents the values of theta0 and theta1. The plot helps visualize the convergence of the algorithm and the values of theta0 and theta1 that minimize the cost function.
+
+
+![Theta0 Theta1 over Iterations](images/my_theta.png)
