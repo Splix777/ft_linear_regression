@@ -154,3 +154,12 @@ The plot shows how the values of theta0 and theta1 change over the iterations of
 ### Summery 
 * The weight (theta0) captures the direction and strength of the relationship between the feature and the target value.
 * The bias term (theta1) helps adjust the overall prediction level to better fit the data.
+
+### Rescaling for Better Interpretation
+In practice, such large coefficients often indicate that the data might benefit from rescaling or normalization. For instance, if your kilometers are in thousands, we might want to adjust the units to reflect that. Here’s how you can interpret and possibly rescale:
+
+Rescale the Input Variable: If your kilometers are in thousands, you could divide the kilometers by 1000 to interpret the results better.
+
+### Example: If Theta1 equals 6331.56 and our data is in the thousands of kilometers:
+* For every 1000km increase, the pricae changes by approximately 6331.31 units
+* Therefore, for every 1km increase, the price changes by approximately $6

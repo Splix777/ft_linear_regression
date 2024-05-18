@@ -83,7 +83,7 @@ class DataAnalysisClass:
         Initializes the plot for the training animation.
         """
         plt.ion()
-        self.fig, (self.ax1, self.ax2, self.ax3) = plt.subplots(3, 1, figsize=(10, 12))
+        self.fig, (self.ax1, self.ax2, self.ax3, self.ax4) = plt.subplots(4, 1, figsize=(10, 16))
         plt.subplots_adjust(hspace=0.5)
 
         self.main_title = self.fig.suptitle(f'Linear Regression Training\nLearning Rate: {self.alpha}, Epochs: 0')
@@ -110,6 +110,13 @@ class DataAnalysisClass:
         self.ax3.set_ylabel('Theta 1 Value')
         self.ax3.set_title('Theta 1 Values over Iterations')
         self.ax3.grid(True)
+
+        # Plot for Cost function values
+        self.loss_vals, = self.ax4.plot([], [], 'g-', label='Cost Function')
+        self.ax4.set_xlabel('Iteration')
+        self.ax4.set_ylabel('Cost')
+        self.ax4.set_title('Cost Function over Iterations')
+        self.ax4.grid(True)
 
     def __save_animation(self) -> None:
         """
@@ -196,18 +203,24 @@ class DataAnalysisClass:
                 range(len(self.theta0_history)), self.theta0_history)
             self.theta1_vals.set_data(
                 range(len(self.theta1_history)), self.theta1_history)
+            self.loss_vals.set_data(range(len(self.losses)), self.losses)
 
             self.ax2.relim()
             self.ax2.autoscale_view()
             self.ax3.relim()
             self.ax3.autoscale_view()
+            self.ax4.relim()
+            self.ax4.autoscale_view()
 
             self.ax2.legend().remove()
             self.ax2.legend([f'Theta 0: {self.theta0_history[-1]:.8f}'])
             self.ax3.legend().remove()
             self.ax3.legend([f'Theta 1: {self.theta1_history[-1]:.8f}'])
+            self.ax4.legend().remove()
+            self.ax4.legend([f'Cost: {self.losses[-1]:.8f}'])
 
-            self.main_title.set_text(f'Linear Regression Training\nLearning Rate: {self.alpha}, Epochs: {frame}')
+            epoch = len(self.theta0_history)
+            self.main_title.set_text(f'Linear Regression Training\nLearning Rate: {self.alpha}, Epochs: {epoch}')
 
             if len(self.losses) > 1:
                 if (abs(self.losses[-1]
@@ -300,7 +313,7 @@ def premade_data() -> None:
     pickle_path = os.path.join(base_dir, 'pickle_files/model.pkl')
     bonus = True
     learning_rate = 0.01
-    iterations = 1000
+    iterations = 1500
     stop_threshold = 1e-6
     DataAnalysisClass(
         data_path=data_path,
