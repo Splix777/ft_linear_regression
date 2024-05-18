@@ -162,4 +162,4 @@ Rescale the Input Variable: If your kilometers are in thousands, you could divid
 
 ### Example: If Theta1 equals 6331.56 and our data is in the thousands of kilometers:
 * For every 1000km increase, the pricae changes by approximately 6331.31 units
-* Therefore, for every 1km increase, the price changes by approximately $6
+* Therefore, for every 1km increase, the price changes by approximately $6.30
