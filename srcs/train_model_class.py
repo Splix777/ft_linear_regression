@@ -1,6 +1,5 @@
 import os
 import pickle
-
 import matplotlib.animation as animation
 import matplotlib.pyplot as plt
 import numpy as np
@@ -84,30 +83,40 @@ class DataAnalysisClass:
         Initializes the plot for the training animation.
         """
         plt.ion()
-        self.fig, (self.ax1, self.ax2) = plt.subplots(2, 1, figsize=(10, 8))
+        self.fig, (self.ax1, self.ax2, self.ax3) = plt.subplots(3, 1, figsize=(10, 12))
+        plt.subplots_adjust(hspace=0.5)
+
+        self.main_title = self.fig.suptitle(f'Linear Regression Training\nLearning Rate: {self.alpha}, Epochs: 0')
+
+        # Plot for data points and regression line
         self.ax1.scatter(self.km, self.price, color='blue')
-        self.line1, = self.ax1.plot(
-            self.km, self.__hypothesis(self.theta, self.x_normalized), 'r-')
-        self.ax1.scatter(self.km, self.price, color='blue')
-        self.theta0_vals, = self.ax2.plot([], [], 'b-', label='Theta 0')
-        self.theta1_vals, = self.ax2.plot([], [], 'r-', label='Theta 1')
+        self.line1, = self.ax1.plot(self.km, self.__hypothesis(self.theta, self.x_normalized), 'r-')
         self.ax1.set_xlabel('km')
         self.ax1.set_ylabel('price')
         self.ax1.set_title('Linear Regression Training')
         self.ax1.legend(['Data', 'Linear Regression Line'])
         self.ax1.grid(True)
+
+        # Plot for Theta 0 values
+        self.theta0_vals, = self.ax2.plot([], [], 'b-', label='Theta 0 (Weight)')
         self.ax2.set_xlabel('Iteration')
-        self.ax2.set_ylabel('Theta Value')
-        self.ax2.set_title('Theta Values over Iterations')
-        self.ax2.legend()
+        self.ax2.set_ylabel('Theta 0 Value')
+        self.ax2.set_title('Theta 0 Values over Iterations')
         self.ax2.grid(True)
+
+        # Plot for Theta 1 values
+        self.theta1_vals, = self.ax3.plot([], [], 'r-', label='Theta 1 (Bias)')
+        self.ax3.set_xlabel('Iteration')
+        self.ax3.set_ylabel('Theta 1 Value')
+        self.ax3.set_title('Theta 1 Values over Iterations')
+        self.ax3.grid(True)
 
     def __save_animation(self) -> None:
         """
         Saves the training animation to a GIF file.
         """
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        dest = os.path.join(base_dir, 'images/training_animation.gif')
+        dest = os.path.join(base_dir, 'srcs/training_animation.gif')
         self.ani.save(dest, writer='imagemagick', fps=60)
 
     def __rescale_theta(self, theta: np.ndarray) -> tuple[float, float]:
@@ -180,20 +189,25 @@ class DataAnalysisClass:
             theta -= self.alpha * gradient
             self.losses.append(self.__cost_function(theta, x, y))
 
-            original_theta0, original_theta1 = self.__rescale_theta(theta)
-            self.theta0_history.append(original_theta0)
-            self.theta1_history.append(original_theta1)
+            self.theta0_history.append(theta[0])
+            self.theta1_history.append(theta[1])
             self.line1.set_ydata(self.__hypothesis(theta, x))
             self.theta0_vals.set_data(
                 range(len(self.theta0_history)), self.theta0_history)
             self.theta1_vals.set_data(
                 range(len(self.theta1_history)), self.theta1_history)
+
             self.ax2.relim()
             self.ax2.autoscale_view()
+            self.ax3.relim()
+            self.ax3.autoscale_view()
+
             self.ax2.legend().remove()
-            self.ax2.legend([
-                f'Theta0 (km): {self.theta0_history[-1]:.2f}',
-                f'Theta1 (price): {self.theta1_history[-1]:.2f}'])
+            self.ax2.legend([f'Theta 0: {self.theta0_history[-1]:.8f}'])
+            self.ax3.legend().remove()
+            self.ax3.legend([f'Theta 1: {self.theta1_history[-1]:.8f}'])
+
+            self.main_title.set_text(f'Linear Regression Training\nLearning Rate: {self.alpha}, Epochs: {frame}')
 
             if len(self.losses) > 1:
                 if (abs(self.losses[-1]
@@ -286,7 +300,7 @@ def premade_data() -> None:
     pickle_path = os.path.join(base_dir, 'pickle_files/model.pkl')
     bonus = True
     learning_rate = 0.01
-    iterations = 1500
+    iterations = 1000
     stop_threshold = 1e-6
     DataAnalysisClass(
         data_path=data_path,

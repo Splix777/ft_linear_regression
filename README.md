@@ -71,26 +71,26 @@ We will use a scatter plot to visualize the data. A scatter plot is a type of pl
 
 ![Scatter Plot](images/my_linear.png)
 
-#### How are we Visualizing the linear regression?
+### How are we Visualizing the linear regression?
 
 We will use a line plot to visualize the linear regression. A line plot is a type of plot which displays information as a series of data points called 'markers' connected by straight line segments. It is a basic type of chart common in many fields. It is similar to a scatter plot except that the measurement points are ordered (typically by their x-axis value) and joined with straight line segments. A line plot should be used when the x-axis is a continuous variable.
 
-#### What is the precision of the algorithm?
+### What is the precision of the algorithm?
 
 In the context of a machine learning algorithm, precision generally refers to how well the model's predictions match the actual values in the dataset. For a linear regression model, precision typically measures how closely the predicted prices of cars align with their actual prices based on the mileage.
 
-#### How is Precision Calculated?
+### How is Precision Calculated?
 
 1. Prediction: First, the model predicts the prices of cars based on their mileage using the linear regression equation: predicted_price = theta0 + theta1 * mileage, where theta0 and theta1 are the parameters learned during training.
 2. Comparison: Next, the predicted prices are compared with the actual prices in the dataset.
 3. Error Calculation: The difference between the predicted prices and the actual prices is calculated for each car in the dataset. This difference is known as the error.
 4. Precision: The precision of the algorithm is calculated based on the average error across all cars in the dataset. A lower average error indicates higher precision, while a higher average error indicates lower precision.
 
-#### Interpretation of Precision
+### Interpretation of Precision
 - High Precision: If the average error is low, the model's predictions are close to the actual prices, indicating high precision.
 - Low Precision: If the average error is high, the model's predictions are far from the actual prices, indicating low precision.
 
-#### How to Improve Precision?
+### How to Improve Precision?
 - Feature Selection: Choosing the most relevant features (e.g., mileage, age, condition) for predicting car prices can improve precision.
 - Model Complexity: Adjusting the complexity of the linear regression model (e.g., adding polynomial terms) can improve precision.
 - Regularization: Applying regularization techniques (e.g., L1 or L2 regularization) to the linear regression model can improve precision.
@@ -98,28 +98,28 @@ In the context of a machine learning algorithm, precision generally refers to ho
 - Hyperparameter Tuning: Adjusting hyperparameters (e.g., learning rate, number of iterations) in the gradient descent algorithm can improve precision.
 
 
-#### Mean Absolute Error (MAE)
+### Mean Absolute Error (MAE)
 MAE is the average absolute difference between the predicted and actual values. It provides a measure of the model's accuracy without considering the direction of the errors.
 
-#### Mean Squared Error (MSE)
+### Mean Squared Error (MSE)
 MSE is the average of the squared differences between the predicted and actual values. It penalizes larger errors more than MAE, making it sensitive to outliers.
 
-#### R-squared (R²) Score
+### R-squared (R²) Score
 R² represents the proportion of the variance in the dependent variable that is predictable from the independent variable(s). An R² of 0.733 indicates that approximately 73.3% of the variance in the price can be explained by the kilometers. This is a relatively good fit, especially for real-world data, where an R² above 0.7 is often considered quite acceptable.
 
 
-#### What is the significance of the R-squared value?
+### What is the significance of the R-squared value?
 The R-squared value is a statistical measure that represents the proportion of the variance in the dependent variable that is predictable from the independent variable(s). In the context of linear regression, the R-squared value indicates how well the model fits the data. A higher R-squared value indicates a better fit, while a lower R-squared value indicates a poorer fit.
 
 
-#### Key Features of a Residuals Plot
+### Key Features of a Residuals Plot
 1. Residuals are randomly scattered around the horizontal axis: This indicates that the linear regression model is capturing the underlying patterns in the data.
 2. Residuals are centered around zero: This indicates that the model is not systematically overestimating or underestimating the target variable.
 3. Residuals are homoscedastic: This means that the variance of the residuals is constant across all levels of the target variable. If the residuals exhibit a pattern (e.g., a funnel shape), this indicates heteroscedasticity, which may suggest that the model is not appropriate for the data.
 
 ![Residuals Plot](images/my_residuals.png)
 
-#### Interpretation of Residuals Plot
+### Interpretation of Residuals Plot
 - Random Scatter: A random scatter of residuals around the horizontal axis indicates that the linear regression model is capturing the underlying patterns in the data.
 - Centered Residuals: Residuals centered around zero indicate that the model is not systematically overestimating or underestimating the target variable.
 - Homoscedastic Residuals: Homoscedastic residuals suggest that the variance of the residuals is constant across all levels of the target variable, indicating that the model is appropriate for the data.
@@ -130,9 +130,27 @@ The R-squared value is a statistical measure that represents the proportion of t
 
 ---
 
-#### Theta0 Theta1 over Iterations
+### Theta0 Theta1 over Iterations
 
 The plot shows how the values of theta0 and theta1 change over the iterations of the gradient descent algorithm. The x-axis represents the number of iterations, while the y-axis represents the values of theta0 and theta1. The plot helps visualize the convergence of the algorithm and the values of theta0 and theta1 that minimize the cost function.
 
 
 ![Theta0 Theta1 over Iterations](images/my_theta.png)
+
+### Theta0 (Weight)
+* Imagine a straight line fitting your data points (price vs. km) as closely as possible.
+* The weight (theta0) acts like the slope of this line.
+* A positive weight indicates a positive correlation. As the feature value (x or km in your case) increases, the model predicts the target value (price) to also increase (the line slopes upwards).
+* A negative weight indicates a negative correlation. As x (km) increases, the model predicts the target value (price) to decrease (the line slopes downwards).
+* The magnitude of the weight (absolute value) signifies the strength of this relationship. A larger value suggests a steeper slope and a stronger correlation (positive or negative).
+
+### Theta1 (Bias)
+* Think of the bias term (theta1) as a vertical adjustment to the entire line.
+* It acts like a constant value that gets added to the product of the weight (theta0) and the feature value (x).
+* A `positive` bias shifts the entire line upwards, making the model predict higher target values for all feature values.
+* A `negative` bias shifts the line downwards, making the model predict lower target values.
+* The bias term helps the model account for any inherent offset in the data that might not be perfectly captured by the linear relationship between the feature and the target value
+
+### Summery 
+* The weight (theta0) captures the direction and strength of the relationship between the feature and the target value.
+* The bias term (theta1) helps adjust the overall prediction level to better fit the data.
