@@ -61,9 +61,13 @@ class DataAnalysisClass:
         except FileNotFoundError as e:
             raise FileNotFoundError(f"File {self.data_path} not found") from e
 
-        self.data = self.data.dropna().drop_duplicates()
-        self.km = self.data['km'].values.astype(float)
-        self.price = self.data['price'].values.astype(float)
+        try:
+            self.data = self.data.dropna().drop_duplicates()
+            self.km = self.data['km'].values.astype(float)
+            self.price = self.data['price'].values.astype(float)
+        except ValueError as e:
+            raise ValueError(e)
+    
         if len(self.km) < 2 or len(self.price) < 2:
             raise ValueError("Not enough data to train the model")
 
