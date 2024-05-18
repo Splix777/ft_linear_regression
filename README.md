@@ -1,7 +1,7 @@
 <h1 align="center">ft_linear_regression</h1>
 
 <p align="center">
-  <img src="images/training_animation.gif" alt="Your Image" width="50%">
+  <img src="images/training_animation.gif" alt="Your Image" width="100%">
 </p>
 
 ## An introduction to machine learning
