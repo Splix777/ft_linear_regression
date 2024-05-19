@@ -16,6 +16,7 @@ class LinearRegressionModel:
     Includes methods for loading and preprocessing data, fitting the model, saving and loading the model,
     making predictions, plotting data, calculating precision, and more.
     """
+
     def __init__(self, learning_rate: float = 0.01, iterations: int = 1500,
                  stop_threshold: float = 1e-6, bonus: bool = False) -> None:
         """

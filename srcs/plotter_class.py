@@ -32,7 +32,6 @@ class PlottingClass:
         self.alpha = learning_rate
         self.iter = iterations
         self.stop_threshold = stop_threshold
-        self.initialize_plots()
 
     def initialize_plots(self) -> None:
         """
