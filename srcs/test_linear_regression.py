@@ -4,7 +4,7 @@ import warnings
 import numpy as np
 import pandas as pd
 from sklearn.linear_model import LinearRegression
-from srcs.train_model_class import DataAnalysisClass
+from srcs.train_model_class import LinearRegressionModel
 from srcs.linear_regression_predictor import LinearRegressionPredictor
 
 warnings.filterwarnings(action="ignore", category=DeprecationWarning)
@@ -19,24 +19,21 @@ class TestLinearRegression(unittest.TestCase):
         Set up test data and objects.
         """
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        self.pkl_pth = os.path.join(base_dir, "pickle_files/model.pkl")
+        self.json = os.path.join(base_dir, "json_files/model.json")
         self.data_path = os.path.join(base_dir, "csv_files/data.csv")
         data = pd.read_csv(self.data_path)
-        self.km = data['km'].values
-        self.price = data['price'].values
+        self.x_feature = 'km'
+        self.y_feature = 'price'
+        self.km = data[self.x_feature].values
+        self.price = data[self.y_feature].values
 
-        if not os.path.exists(self.pkl_pth):
-            self.bonus = True
-            self.learning_rate = 0.01
-            self.iterations = 1000
-            self.data_analysis = DataAnalysisClass(
-                data_path=self.data_path,
-                pickle_path=self.pkl_pth,
-                bonus=self.bonus,
-                learning_rate=self.learning_rate,
-                iterations=self.iterations
-            )
-        self.predictor = LinearRegressionPredictor(self.pkl_pth)
+        if not os.path.exists(self.json):
+            self.data_analysis = LinearRegressionModel()
+            self.data_analysis.load_data(self.data_path, self.x_feature, self.y_feature)
+            self.data_analysis.fit()
+            self.data_analysis.save_model(self.json)
+
+        self.predictor = LinearRegressionPredictor(self.json)
         self.sklearn_model = LinearRegression().fit(
             np.array(self.km).reshape(-1, 1),
             np.array(self.price).reshape(-1, 1))

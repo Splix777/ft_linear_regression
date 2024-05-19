@@ -1,5 +1,5 @@
 import os
-import pickle
+import json
 
 
 class LinearRegressionPredictor:
@@ -16,19 +16,19 @@ class LinearRegressionPredictor:
         """
         try:
             with open(self.model_path, 'rb') as f:
-                data = pickle.load(f)
+                data = json.load(f)
         except FileNotFoundError as e:
             raise FileNotFoundError(f"{self.model_path} not found") from e
 
         self.theta = data["theta"]
-        self.mean_km = data["mean_km"]
-        self.std_km = data["std_km"]
+        self.mean_km = data["mean_x"]
+        self.std_km = data["std_x"]
 
-    def predict(self, km: int) -> float:
+    def predict(self, km: float) -> float:
         """
         Predict the price of a car given its kilometers.
         """
-        if not isinstance(km, int) or km < 0 or km > 1_000_000:
+        if not isinstance(km, float) or km < 0 or km > 1_000_000:
             raise ValueError("Please enter a number between 0 and 1_000_000")
         price = (self.theta[0] * (km - self.mean_km)
                  / self.std_km + self.theta[1])
@@ -51,11 +51,11 @@ def get_user_input() -> int:
               'Values should be between 0 and 1_000_000.',
               sep='\n')
 
-        km = int(input("Cars Kilometers: "))
+        km = float(input("Cars Kilometers: "))
         if km < 0 or km > 1_000_000:
             raise ValueError("Please enter a number between 0 and 1_000_000")
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        pickle_path = os.path.join(base_dir, "pickle_files/model.pkl")
+        pickle_path = os.path.join(base_dir, "json_files/test.json")
         predictor = LinearRegressionPredictor(pickle_path)
         price = predictor.predict(km)
         if price < 0:
@@ -65,7 +65,7 @@ def get_user_input() -> int:
     except ValueError as e:
         raise ValueError("Please enter a valid number") from e
 
-    return km
+    return int(km)
 
 
 if __name__ == "__main__":
