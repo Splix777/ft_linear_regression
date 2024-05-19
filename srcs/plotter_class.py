@@ -1,10 +1,23 @@
-import matplotlib.animation as animation
 import matplotlib.pyplot as plt
 import numpy as np
 
 
 class PlottingClass:
-    def __init__(self, x_feature, x_name, y_feature, y_name, learning_rate, iterations, stop_threshold):
+    """
+    Class for plotting and visualizing the linear regression training process.
+
+    Includes methods for initializing plots, updating plots with training progress, showing plots,
+    saving animations, plotting residuals, and plotting data.
+    """
+
+    def __init__(self, x_feature: np.ndarray, x_name: str, y_feature: np.ndarray,
+                 y_name: str, learning_rate: float, iterations: int, stop_threshold: float):
+        """
+        Initialize the plotting class for visualizing linear regression training.
+
+        Initializes the plotting class with the specified features, learning rate, number of iterations,
+        and stop threshold for plotting the training progress.
+        """
         self.plt = plt
         self.main_title = None
         self.fig = None
@@ -21,7 +34,13 @@ class PlottingClass:
         self.stop_threshold = stop_threshold
         self.initialize_plots()
 
-    def initialize_plots(self):
+    def initialize_plots(self) -> None:
+        """
+        Initialize the plots for visualizing linear regression training.
+
+        Sets up the subplots for displaying data points, regression lines, theta values, and cost function values
+        over the training iterations.
+        """
         self.plt.ion()
         self.fig, (self.ax1, self.ax2, self.ax3, self.ax4) = plt.subplots(4, 1, figsize=(10, 16))
         self.plt.subplots_adjust(hspace=0.5)
@@ -58,7 +77,15 @@ class PlottingClass:
         self.ax4.set_title('Cost Function over Iterations')
         self.ax4.grid(True)
 
-    def update_plots(self, theta0_history, theta1_history, losses, hypothesis):
+    def update_plots(self, theta0_history: np.ndarray, theta1_history: np.ndarray,
+                     losses: np.ndarray, hypothesis: np.ndarray) -> None:
+        """
+        Update the plots with the latest training progress.
+
+        Updates the plots with the latest values of hypothesis, theta 0, theta 1, and cost function
+        over the training iterations. Adjusts the axes and legends accordingly to reflect the
+        current state of the training.
+        """
         self.line1.set_ydata(hypothesis)
         self.theta0_vals.set_data(range(len(theta0_history)), theta0_history)
         self.theta1_vals.set_data(range(len(theta1_history)), theta1_history)
@@ -81,19 +108,42 @@ class PlottingClass:
         epoch = len(theta0_history)
         self.main_title.set_text(f'Linear Regression Training\nLearning Rate: {self.alpha}, Epochs: {epoch}')
 
-    def show(self):
+    def show(self) -> None:
+        """
+        Display the plots.
+
+        Turns off interactive mode and displays the plots for visualization.
+        """
         self.plt.ioff()
         self.plt.show()
 
     @staticmethod
-    def save_animation(ani, dest):
+    def save_animation(ani: plt, dest: str) -> None:
+        """
+        Save the animation as a GIF.
+
+        Saves the provided animation object as a GIF file at the specified
+        destination using the 'ffmpeg' writer with a frame rate of 15 fps.
+        """
         try:
             ani.save(dest, writer='ffmpeg', fps=15)
         except Exception as e:
             print(f"Error saving the animation: {e}")
 
     @staticmethod
-    def plot_residuals(feature, residuals, feature_name):
+    def plot_residuals(feature: np.ndarray, residuals: np.ndarray, feature_name: str) -> None:
+        """
+        Plot the residuals of the linear regression model.
+
+        Creates a scatter plot of residuals against a specific feature, with the residuals colored in red.
+        Includes a horizontal line at y=0, representing the zero residual line.
+        Args:
+            feature: An array of feature values.
+            residuals: An array of residuals corresponding to the feature values.
+            feature_name: The name of the feature being analyzed.
+        Returns:
+            None
+        """
         plt.scatter(feature, residuals, color='red')
         plt.axhline(y=0, color='blue', linestyle='--')
         plt.title('Residuals Plot')
@@ -103,7 +153,22 @@ class PlottingClass:
         plt.show()
 
     @staticmethod
-    def plot_data(feature1, feature2, hypothesis, feature1_name, feature2_name):
+    def plot_data(feature1: np.ndarray, feature2: np.ndarray, hypothesis: np.ndarray,
+                  feature1_name: str, feature2_name: str) -> None:
+        """
+        Plot the data points and linear regression line.
+
+        Creates a scatter plot of data points with a linear regression line based on the provided features.
+        The data points are shown in blue, and the linear regression line is displayed in red.
+        Args:
+            feature1: An array of values for the first feature.
+            feature2: An array of values for the second feature.
+            hypothesis: An array of predicted values based on the linear regression model.
+            feature1_name: The name of the first feature.
+            feature2_name: The name of the second feature.
+        Returns:
+            None
+        """
         plt.scatter(feature1, feature2, color='blue')
         plt.plot(feature1, hypothesis, color='red')
         plt.title('Linear Regression')

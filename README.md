@@ -155,11 +155,40 @@ The plot shows how the values of theta0 and theta1 change over the iterations of
 * The weight (theta0) captures the direction and strength of the relationship between the feature and the target value.
 * The bias term (theta1) helps adjust the overall prediction level to better fit the data.
 
+### Our Models Results
+- **Mean Absolute Error (MAE): 557.8383385244471**
+- **Mean Squared Error (MSE): 445645.2450744666**
+- **R-squared (R²): 0.7329747078295832**
+- **Model Precision (R²): 73.30%**
+- **Anything above 70% is considered a good model**
+
 ### Rescaling for Better Interpretation
 In practice, such large coefficients often indicate that the data might benefit from rescaling or normalization. For instance, if your kilometers are in thousands, we might want to adjust the units to reflect that. Here’s how you can interpret and possibly rescale:
 
 Rescale the Input Variable: If your kilometers are in thousands, you could divide the kilometers by 1000 to interpret the results better.
 
 ### Example: If Theta1 equals 6331.56 and our data is in the thousands of kilometers:
-* For every 1000km increase, the pricae changes by approximately 6331.31 units
-* Therefore, for every 1km increase, the price changes by approximately $6.30
+* For every 1000km increase, the price changes by approximately 6331.31 units
+* Therefore, for every 1km increase, the price changes by approximately $6.33
+
+### What is the Cost Function?
+The cost function, often referred to as the "mean squared error" (MSE) in the context of linear regression, measures the average of the squares of the errors—that is, the differences between the predicted values and the actual values.
+
+## Formula for Cost Function
+Notation
+𝑚 (m): Number of training examples.
+ℎ𝜃(𝑥(𝑖)) (hθ(x(i))): Predicted value by the hypothesis function for the 𝑖-th training example.
+𝑦(𝑖) (y(i)): Actual value for the 𝑖-th training example.
+𝜃 (theta): Vector representing the model parameters (weights).
+Cost Function (J(𝜃))
+The cost function, denoted by 𝐽(𝜃) (J(theta)), measures how well the model fits the training data. It is calculated by summing the squared differences between the predicted values (ℎ𝜃(𝑥(𝑖))) and the actual values (𝑦(𝑖)) for all training examples, and then dividing by 2𝑚 (2m).
+
+Mathematical Formula:
+
+𝐽(𝜃)=12𝑚∑𝑖=1𝑚(ℎ𝜃(𝑥(𝑖))−𝑦(𝑖))2
+Minimizing the Cost Function:
+
+The goal of linear regression is to find the values for 𝜃 (theta) that minimize the cost function 𝐽(𝜃) (J(theta)). This can be achieved using optimization algorithms such as gradient descent. A lower cost function indicates a better fit of the model to the training data.
+
+## What Does the Cost Value Represent?
+The cost value represents the average squared difference between the predicted values and the actual values in the training data. A lower cost value indicates that the model is better at predicting the target variable based on the input features.

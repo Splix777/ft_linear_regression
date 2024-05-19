@@ -28,7 +28,7 @@ class LinearRegressionPredictor:
         """
         Predict the price of a car given its kilometers.
         """
-        if not isinstance(km, float) or km < 0 or km > 1_000_000:
+        if not isinstance(km, int) or km < 0 or km > 1_000_000:
             raise ValueError("Please enter a number between 0 and 1_000_000")
         price = (self.theta[0] * (km - self.mean_km)
                  / self.std_km + self.theta[1])
@@ -51,7 +51,7 @@ def get_user_input() -> int:
               'Values should be between 0 and 1_000_000.',
               sep='\n')
 
-        km = float(input("Cars Kilometers: "))
+        km = int(input("Cars Kilometers: "))
         if km < 0 or km > 1_000_000:
             raise ValueError("Please enter a number between 0 and 1_000_000")
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -65,7 +65,7 @@ def get_user_input() -> int:
     except ValueError as e:
         raise ValueError("Please enter a valid number") from e
 
-    return int(km)
+    return km
 
 
 if __name__ == "__main__":
