@@ -48,7 +48,7 @@ class LinearRegressionModel:
         self.x_feature = x_feature
         self.y_feature = y_feature
         self.__load_data()
-        self.__normalize_features()
+        # self.__normalize_features()
         self.plotter = PlottingClass(x_feature=self.x, x_name=x_feature,
                                      y_feature=self.y, y_name=y_feature,
                                      learning_rate=self.alpha,
@@ -97,7 +97,7 @@ class LinearRegressionModel:
         self.std_x = np.std(self.x)
         try:
             self.x_normalized = (self.x - self.mean_x) / self.std_x
-            self.x_normalized = np.column_stack((self.x_normalized, np.ones_like(self.x_normalized)))
+            return np.column_stack((self.x_normalized, np.ones_like(self.x_normalized)))
         except ZeroDivisionError as e:
             raise ZeroDivisionError("Standard deviation of the feature to predict is 0") from e
 
@@ -172,13 +172,18 @@ class LinearRegressionModel:
         dest = os.path.join(base_dir, 'srcs/training_animation.gif')
         self.plotter.save_animation(ani, dest)
 
-    def fit(self) -> None:
+    def fit(self, normalize: bool = True) -> None:
         """
         Fit the linear regression model.
 
         Calls the private method __train_dataset() to train the linear regression model.
         """
-        self.__train_dataset()
+        if normalize:
+          self.x_normalized = self.__normalize_features(x)
+          self.__train_dataset(self.x_normalized, y)
+        else:
+          self.x_normalized = x
+          self.__train_dataset(self.x_normalized, y)
 
     def __train_dataset(self) -> None:
         """
