@@ -1,10 +1,13 @@
 import json
+import logging
 import os
+from typing import Any
 
 import numpy as np
 import pandas as pd
 import tqdm
-from matplotlib import animation
+from matplotlib import animation, pyplot as plt
+from numpy import ndarray, dtype
 
 from srcs.plotter_class import PlottingClass
 
@@ -25,6 +28,9 @@ class LinearRegressionModel:
         Initializes the training model with the given learning rate, number of iterations, stop threshold,
         and bonus flag. Sets default values for other attributes like precision, paths, features, and theta.
         """
+        self.x_standardized = None
+        self.mean_x = 0
+        self.std_x = 0
         self.precision = None
         self.json_path = None
         self.plotter = None
@@ -48,9 +54,8 @@ class LinearRegressionModel:
         self.x_feature = x_feature
         self.y_feature = y_feature
         self.__load_data()
-        # self.__normalize_features()
-        self.plotter = PlottingClass(x_feature=self.x, x_name=x_feature,
-                                     y_feature=self.y, y_name=y_feature,
+        self.plotter = PlottingClass(x_feature=self.x, x_name=self.x_feature,
+                                     y_feature=self.y, y_name=self.y_feature,
                                      learning_rate=self.alpha,
                                      iterations=self.iter,
                                      stop_threshold=self.stop_threshold)
@@ -82,25 +87,6 @@ class LinearRegressionModel:
         if len(self.x) < 2 or len(self.y) < 2:
             raise ValueError("Not enough data to train the model")
 
-    def __normalize_features(self) -> None:
-        """
-        Normalize the features for training.
-
-        Calculates the mean and standard deviation of the features, then normalizes the features
-        by subtracting the mean and dividing by the standard deviation. If the standard deviation
-        of the feature to predict is 0, a ZeroDivisionError is raised.
-
-        Raises:
-            ZeroDivisionError: If the standard deviation of the feature to predict is 0.
-        """
-        self.mean_x = np.mean(self.x)
-        self.std_x = np.std(self.x)
-        try:
-            self.x_normalized = (self.x - self.mean_x) / self.std_x
-            return np.column_stack((self.x_normalized, np.ones_like(self.x_normalized)))
-        except ZeroDivisionError as e:
-            raise ZeroDivisionError("Standard deviation of the feature to predict is 0") from e
-
     def load_model(self, json_path: str) -> None:
         """
         Load the model from the json file
@@ -128,8 +114,6 @@ class LinearRegressionModel:
             with open(self.json_path, 'r') as f:
                 data_loaded = json.load(f)
             self.theta = np.array(data_loaded["theta"])
-            self.mean_x = data_loaded["mean_x"]
-            self.std_x = data_loaded["std_x"]
         except FileNotFoundError as e:
             raise FileNotFoundError(f"{self.json_path} not found") from e
 
@@ -152,11 +136,7 @@ class LinearRegressionModel:
         try:
             if not os.path.exists(os.path.dirname(self.json_path)):
                 os.makedirs(os.path.dirname(self.json_path))
-            data_to_save = {
-                "theta": self.theta.tolist(),
-                "mean_x": self.mean_x,
-                "std_x": self.std_x
-            }
+            data_to_save = {"theta": self.theta.tolist()}
             with open(self.json_path, 'w') as f:
                 json.dump(data_to_save, f)
         except FileNotFoundError as e:
@@ -172,48 +152,107 @@ class LinearRegressionModel:
         dest = os.path.join(base_dir, 'srcs/training_animation.gif')
         self.plotter.save_animation(ani, dest)
 
-    def fit(self, normalize: bool = True) -> None:
+    def __standardize_features(self) -> None:
+        """
+        Normalize the features for training.
+
+        Calculates the mean and standard deviation of the features, then normalizes the features
+        by subtracting the mean and dividing by the standard deviation. If the standard deviation
+        of the feature to predict is 0, a ZeroDivisionError is raised.
+
+        Raises:
+            ZeroDivisionError: If the standard deviation of the feature to predict is 0.
+        """
+        self.x_mean = np.mean(self.x, axis=0)
+        self.x_std = np.std(self.x, axis=0)
+        self.y_mean = np.mean(self.y, axis=0)
+        self.y_std = np.std(self.y, axis=0)
+        try:
+            self.x_standardized = (self.x - self.x_mean) / self.x_std
+            self.y_standardized = (self.y - self.y_mean) / self.y_std
+        except ZeroDivisionError as e:
+            raise ZeroDivisionError("Standard deviation of the feature to predict is 0") from e
+
+    def __initialize_progress_bar(self, message: str = '', total: int = 0) -> None:
+        """
+        Initialize the progress bar for training.
+
+        Creates and initializes a progress bar for tracking the training progress of the linear regression model.
+        """
+        self.pbar = tqdm.tqdm(total=total, desc=message, position=0, leave=True)
+
+    def fit(self, visualize: bool = False) -> None:
         """
         Fit the linear regression model.
 
         Calls the private method __train_dataset() to train the linear regression model.
         """
-        if normalize:
-          self.x_normalized = self.__normalize_features(x)
-          self.__train_dataset(self.x_normalized, y)
-        else:
-          self.x_normalized = x
-          self.__train_dataset(self.x_normalized, y)
+        self.__standardize_features()
+        self.__train_dataset(visualize)
 
-    def __train_dataset(self) -> None:
+    def __train_dataset(self, visualize: bool) -> None:
         """
         Train the linear regression model with the dataset.
 
         Performs the training of the linear regression model using the normalized dataset.
         It iteratively updates the model parameters (theta) based on the gradient descent algorithm.
         """
-        self.theta = np.zeros(2)
-
-        self.losses = []
+        self.costs = []
         self.theta0_history = []
         self.theta1_history = []
-        self.__initialize_plot()
-        self.__initialize_progress_bar()
 
-        self.ani = animation.FuncAnimation(self.plotter.fig, self.__update, frames=self.iter, repeat=False)
+        self.__initialize_progress_bar('Training the model...', self.iter)
+        self.__gradient_descent()
+        self.pbar.close()
+        self.__de_standardize_theta()
+
+        if visualize:
+            self.__animate_data()
+            os.system('open training_animation.gif')
+
+    def __animate_data(self):
+        self.__de_standardize_theta_history()
+        self.__initialize_progress_bar('Creating the animation...', self.animation_epoch)
+        self.plotter.initialize_plots()
+        self.ani = animation.FuncAnimation(self.plotter.fig, self.__create_gif, frames=self.animation_epoch, repeat=False)
         self.__save_animation(self.ani)
         self.pbar.close()
         self.plotter.show()
 
-    def __initialize_progress_bar(self) -> None:
+    def __gradient_descent(self) -> None:
         """
-        Initialize the progress bar for training.
+        Perform linear regression on the dataset.
 
-        Creates and initializes a progress bar for tracking the training progress of the linear regression model.
+        Performs linear regression on the dataset by iteratively updating the model parameters (theta)
+        using the gradient descent algorithm. Updates the loss history and model parameter history,
+        and triggers plot updates during training.
         """
-        self.pbar = tqdm.tqdm(total=self.iter, desc="Training Model", position=0, leave=True)
+        n = len(self.x_standardized)
+        for i in range(self.iter):
+            prediction = self.__hypothesis(self.theta, self.x_standardized)
+            cost = self.__cost_function(prediction, self.y_standardized, n)
+            residuals = prediction - self.y_standardized
 
-    def __update(self, frame: int) -> iter:
+            gradient_theta0 = (2/n) * sum(residuals)
+            gradient_theta1 = (2/n) * sum(residuals * self.x_standardized)
+
+            self.theta[0] -= self.alpha * gradient_theta0
+            self.theta[1] -= self.alpha * gradient_theta1
+
+            self.__save_update_values(self.theta[0], self.theta[1], cost)
+
+            if len(self.costs) > 1 and abs(self.costs[-1] - self.costs[-2]) < self.stop_threshold:
+                self.animation_epoch = i
+                logging.info(f"Training stopped at epoch {i} with cost {cost}")
+                break
+
+    def __save_update_values(self, gradient_theta0, gradient_theta1, cost):
+        self.theta0_history.append(gradient_theta0)
+        self.theta1_history.append(gradient_theta1)
+        self.costs.append(cost)
+        self.pbar.update(1)
+
+    def __create_gif(self, frame: int) -> iter:
         """
         Update the model parameters during training.
 
@@ -221,22 +260,27 @@ class LinearRegressionModel:
         using the gradient descent algorithm. Updates the loss history and model parameter history,
         and triggers plot updates during training.
         """
-        hypothesis = self.__hypothesis(self.theta, self.x_normalized)
-        error = hypothesis - self.y
-        gradient = np.dot(self.x_normalized.T, error) / len(self.y)
-        self.theta -= self.alpha * gradient
-
-        self.losses.append(self.__cost_function(hypothesis, self.y))
-        self.theta0_history.append(self.theta[0])
-        self.theta1_history.append(self.theta[1])
-
-        self.plotter.update_plots(self.theta0_history, self.theta1_history, self.losses, hypothesis)
+        theta = np.array([self.theta0_history[frame], self.theta1_history[frame]])
+        prediction = self.__hypothesis(theta, self.x)
+        theta0 = self.theta0_history[:frame]
+        theta1 = self.theta1_history[:frame]
+        costs = self.costs[:frame]
         self.pbar.update(1)
 
-        if len(self.losses) > 1 and abs(self.losses[-1] - self.losses[-2]):
-            self.ani.event_source.stop()
-            self.iter = frame
-            return
+        self.plotter.update_plots(theta0, theta1, costs, prediction, frame)
+
+    def __de_standardize_theta_history(self) -> None:
+        """
+        De-standardize the model parameter history.
+
+        De-standardizes the model parameter history (theta0_history, theta1_history) after training
+        to get the correct values for the original dataset.
+        """
+        de_standardized_theta1_history = np.array(self.theta1_history) * (self.y_std / self.x_std)
+        de_standardized_theta0_history = (np.array(self.theta0_history) * self.y_std) + self.y_mean - (
+                np.array(self.theta1_history) * self.x_mean * self.y_std / self.x_std)
+        self.theta0_history = de_standardized_theta0_history
+        self.theta1_history = de_standardized_theta1_history
 
     @staticmethod
     def __hypothesis(theta: np.ndarray, x: np.ndarray) -> np.ndarray:
@@ -245,27 +289,33 @@ class LinearRegressionModel:
 
         Calculates the hypothesis values based on the model parameters (theta) and input features (x).
         """
-        return np.dot(x, theta)
+        return theta[0] + theta[1] * x
 
     @staticmethod
-    def __cost_function(hypothesis: np.ndarray, y: np.ndarray) -> float:
+    def __cost_function(prediction: np.ndarray, y: np.ndarray, n: int) -> float:
         """
         Calculate the cost function for linear regression.
 
         Calculates the cost function value based on the hypothesis values and actual target values.
         """
-        m = len(y)
-        return np.sum((hypothesis - y) ** 2) / (2 * m)
+        return np.sum((y - prediction) ** 2) / n
 
-    def __initialize_plot(self) -> None:
+    def __de_standardize_theta(self) -> None:
         """
-        Initialize the plotting for the training process.
+        De-standardize the model parameters.
 
-        Initializes the plots for visualizing the training progress of the linear regression model.
+        De-standardizes the model parameters (theta) after training to get the correct values
+        for the original dataset.
         """
-        self.plotter.initialize_plots()
+        theta0_standardized = self.theta[0]
+        theta1_standardized = self.theta[1]
 
-    def predict(self, x: list) -> list:
+        de_standardized_theta1 = theta1_standardized * (self.y_std / self.x_std)
+        de_standardized_theta0 = (theta0_standardized * self.y_std) + self.y_mean - (theta1_standardized * self.x_mean * self.y_std / self.x_std)
+
+        self.theta = np.array([de_standardized_theta0, de_standardized_theta1])
+
+    def predict(self, estimate: float, model: str = None) -> float:
         """
         Predict the target values using the linear regression model.
 
@@ -275,22 +325,16 @@ class LinearRegressionModel:
         Raises:
             ValueError: If the input values are not in the correct format or if there is an issue loading the model.
         """
-        if not isinstance(x, list):
-            raise ValueError("Please enter a list of values to predict")
-        for value in x:
-            if not isinstance(value, (int, float)):
-                raise ValueError("Please enter a list of numbers to predict")
-        # Load the model if it hasn't been loaded
+        if not isinstance(estimate, int):
+            raise ValueError("Please enter a numerical value for mileage.")
+
+        if model:
+            self.load_model(model)
+
         if self.theta[0] == 0 and self.theta[1] == 0:
-            base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            json_path = os.path.join(base_dir, 'json_files/model.json')
-            self.load_model(json_path)
-        results = []
-        for i in range(len(x)):
-            result = (self.theta[0] * (x[i] - self.mean_x) / self.std_x + self.theta[1])
-            x[i] = round(result, 2)
-            results.append(x[i])
-        return results
+            self.load_model(self.json_path)
+
+        return float(self.theta[0]) + float(self.theta[1]) * estimate
 
     def plot_residuals(self) -> None:
         """
@@ -299,8 +343,8 @@ class LinearRegressionModel:
         Calculates the residuals by comparing the actual target values (y) with the predicted values
         from the model. Plots the residuals against the input features (x) for visualization.
         """
-        predictions = self.__hypothesis(self.theta, self.x_normalized)
-        residuals = self.y - predictions
+        prediction = self.__hypothesis(self.theta, self.x)
+        residuals = prediction - self.y
         self.plotter.plot_residuals(self.x, residuals, self.x_feature)
 
     def plot_data(self) -> None:
@@ -310,8 +354,16 @@ class LinearRegressionModel:
         Calculates the hypothesis values using the model parameters and input features, then plots
         the actual data points along with the linear regression model's predictions for visualization.
         """
-        hypothesis = self.__hypothesis(self.theta, self.x_normalized)
+        hypothesis = self.__hypothesis(self.theta, self.x)
         self.plotter.plot_data(self.x, self.y, hypothesis, self.x_feature, self.y_feature)
+
+    def plot_cost(self) -> None:
+        """
+        Plot the cost function over the training iterations.
+
+        Plots the cost function values over the training iterations to visualize the convergence of the model.
+        """
+        self.plotter.plot_cost(self.costs)
 
     def calculate_precision(self) -> None:
         """
@@ -321,10 +373,10 @@ class LinearRegressionModel:
         values to evaluate the model's performance. Updates the precision attribute with the R-squared value
         multiplied by 100 to represent the model's precision percentage.
         """
-        predictions = self.__hypothesis(self.theta, self.x_normalized)
-        mae = np.mean(np.abs(predictions - self.y))
-        mse = np.mean((predictions - self.y) ** 2)
-        r_squared = 1 - (np.sum((predictions - self.y) ** 2) / np.sum((self.y - np.mean(self.y)) ** 2))
+        prediction = self.__hypothesis(self.theta, self.x)
+        mae = np.mean(np.abs(prediction - self.y))
+        mse = np.mean((prediction - self.y) ** 2)
+        r_squared = 1 - (np.sum((prediction - self.y) ** 2) / np.sum((self.y - np.mean(self.y)) ** 2))
         self.precision = r_squared * 100
 
         print(f"Mean Absolute Error (MAE): {mae}")
@@ -348,25 +400,29 @@ def premade_data() -> None:
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     data_path = os.path.join(base_dir, 'csv_files/data.csv')
     json_path = os.path.join(base_dir, 'json_files/model.json')
-    bonus = True
+    bonus = False
     learning_rate = 0.01
-    iterations = 1500
-    stop_threshold = 1e-6
+    iterations = 10_000
+    stop_threshold = 1e-12
     x_feature = 'km'
     y_feature = 'price'
 
     model = LinearRegressionModel(learning_rate=learning_rate, iterations=iterations, stop_threshold=stop_threshold,
                                   bonus=bonus)
     model.load_data(data_path=data_path, x_feature=x_feature, y_feature=y_feature)
-    model.fit()
+    model.fit(visualize=False)
     model.save_model(json_path=json_path)
-    model.calculate_precision()
-    model.plot_residuals()
     model.plot_data()
+    model.plot_residuals()
+    model.plot_cost()
+    model.calculate_precision()
 
-    predictions = [240000, 139800, 150500, 185530, 176000]
-    print(model.predict(predictions))
+    predict_km = 240_000
+    print(model.predict(predict_km))
 
 
 if __name__ == "__main__":
+    if os.path.exists('train_model_class.log'):
+        os.remove('train_model_class.log')
+    logging.basicConfig(filename='train_model_class.log', level=logging.INFO)
     premade_data()

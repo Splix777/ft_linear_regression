@@ -21,8 +21,6 @@ class LinearRegressionPredictor:
             raise FileNotFoundError(f"{self.model_path} not found") from e
 
         self.theta = data["theta"]
-        self.mean_km = data["mean_x"]
-        self.std_km = data["std_x"]
 
     def predict(self, km: float) -> float:
         """
@@ -30,9 +28,8 @@ class LinearRegressionPredictor:
         """
         if not isinstance(km, int) or km < 0 or km > 1_000_000:
             raise ValueError("Please enter a number between 0 and 1_000_000")
-        price = (self.theta[0] * (km - self.mean_km)
-                 / self.std_km + self.theta[1])
-        return round(price, 2)
+        results = float(self.theta[0]) + float(self.theta[1]) * km
+        return round(results, 2)
 
 
 def get_user_input() -> int:
@@ -55,7 +52,7 @@ def get_user_input() -> int:
         if km < 0 or km > 1_000_000:
             raise ValueError("Please enter a number between 0 and 1_000_000")
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        pickle_path = os.path.join(base_dir, "json_files/test.json")
+        pickle_path = os.path.join(base_dir, "json_files/model.json")
         predictor = LinearRegressionPredictor(pickle_path)
         price = predictor.predict(km)
         if price < 0:

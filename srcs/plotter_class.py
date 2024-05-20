@@ -40,7 +40,7 @@ class PlottingClass:
         Sets up the subplots for displaying data points, regression lines, theta values, and cost function values
         over the training iterations.
         """
-        self.plt.ion()
+        # self.plt.ion()
         self.fig, (self.ax1, self.ax2, self.ax3, self.ax4) = plt.subplots(4, 1, figsize=(10, 16))
         self.plt.subplots_adjust(hspace=0.5)
 
@@ -77,7 +77,7 @@ class PlottingClass:
         self.ax4.grid(True)
 
     def update_plots(self, theta0_history: np.ndarray, theta1_history: np.ndarray,
-                     losses: np.ndarray, hypothesis: np.ndarray) -> None:
+                     losses: np.ndarray, hypothesis: np.ndarray, epoch: int) -> None:
         """
         Update the plots with the latest training progress.
 
@@ -86,6 +86,7 @@ class PlottingClass:
         current state of the training.
         """
         self.line1.set_ydata(hypothesis)
+        # self.line1.set_data(self.x_feature, hypothesis)
         self.theta0_vals.set_data(range(len(theta0_history)), theta0_history)
         self.theta1_vals.set_data(range(len(theta1_history)), theta1_history)
         self.loss_vals.set_data(range(len(losses)), losses)
@@ -97,15 +98,17 @@ class PlottingClass:
         self.ax4.relim()
         self.ax4.autoscale_view()
 
+        if epoch > 1:
+            self.__update_legends(theta0_history, theta1_history, losses)
+        self.main_title.set_text(f'Linear Regression Training\nLearning Rate: {self.alpha}, Epochs: {epoch}')
+
+    def __update_legends(self, theta0_history, theta1_history, losses):
         self.ax2.legend().remove()
         self.ax2.legend([f'Theta 0: {theta0_history[-1]:.8f}'])
         self.ax3.legend().remove()
         self.ax3.legend([f'Theta 1: {theta1_history[-1]:.8f}'])
         self.ax4.legend().remove()
         self.ax4.legend([f'Cost: {losses[-1]:.8f}'])
-
-        epoch = len(theta0_history)
-        self.main_title.set_text(f'Linear Regression Training\nLearning Rate: {self.alpha}, Epochs: {epoch}')
 
     def show(self) -> None:
         """
@@ -175,4 +178,23 @@ class PlottingClass:
         plt.grid()
         plt.xlabel(f'{feature1_name}')
         plt.ylabel(f'{feature2_name}')
+        plt.show()
+
+    @staticmethod
+    def plot_cost(costs: np.ndarray) -> None:
+        """
+        Plot the cost function values over the range of weights.
+
+        Creates a line plot of the cost function values against a range of weight values.
+        Args:
+            weights: An array of weight values.
+            costs: An array of cost function values corresponding to the weight values.
+        Returns:
+            None
+        """
+        plt.plot(range(len(costs)), costs, color='green')
+        plt.title('Costs Over Iterations')
+        plt.xlabel('Iterations')
+        plt.ylabel('Cost')
+        plt.grid()
         plt.show()
