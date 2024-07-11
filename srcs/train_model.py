@@ -83,8 +83,6 @@ class LinearRegressionModel:
                 self.target = model["target"]
                 self.pred = model["pred"]
 
-            print(f'Model saved to {model_file}')
-
         except FileNotFoundError as e:
             raise FileNotFoundError("Model file not found.") from e
         except Exception as e:
@@ -160,6 +158,7 @@ class LinearRegressionModel:
         pbar.close()
         self._de_standardize_weights()
         self._save_model()
+
         if self.bonus:
             self.plot()
 
@@ -224,15 +223,14 @@ class LinearRegressionModel:
         r2 = 1 - (np.sum(error ** 2) / np.sum(
             (self.data[self.target] - np.mean(self.data[self.target])) ** 2))
 
-        print(
-            f"Mean Absolute Error: {mae:.2f}",
-            f"Mean Squared Error: {mse:.2f}",
-            f"Root Mean Squared Error: {rmse:.2f}",
-            f"R2 Score: {r2:.2f}",
-            f"Model Precision: {r2 * 100:.2f}%",
-            f"Intercept: {self.intercept:.4f}",
-            f"Slope: {self.slope:.4f}",
-            sep="\n",
+        return (
+            f"Mean Absolute Error: {mae:.2f}\n"
+            f"Mean Squared Error: {mse:.2f}\n"
+            f"Root Mean Squared Error: {rmse:.2f}\n"
+            f"R2 Score: {r2:.2f}\n",
+            f"Model Precision: {r2 * 100:.2f}%\n"
+            f"Intercept: {self.intercept:.4f}\n"
+            f"Slope: {self.slope:.4f}\n"
         )
 
     def plot(self):
@@ -297,18 +295,15 @@ class LinearRegressionModel:
                     predictions=_predict(self.original_data[self.pred]),
                     epoch=frame,
                 )
-                pbar.update(1)
                 time.sleep(0.01)
 
             plotter.initialize_gif_plot()
-            pbar = tqdm(total=self.epochs, desc="Creating GIF frames")
             ani = animation.FuncAnimation(
                 fig=plotter.fig,
                 func=_create_gif,
                 frames=self.epochs,
                 repeat=False
             )
-            pbar.close()
             plotter.save_animation(ani, "images/training_animation.gif")
 
         except Exception as e:

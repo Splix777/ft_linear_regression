@@ -37,9 +37,9 @@ def verify_args(args: argparse.Namespace) -> tuple[str, str, str, bool]:
         raise PermissionError("Model directory is not writable.")
 
     # Check if the mode is valid
-    if args.mode not in ["train", "predict"]:
-        raise ValueError("Mode must be either 'train' or 'predict'.")
-    if args.mode == "predict":
+    if args.mode not in ["train", "predict", "evaluate"]:
+        raise ValueError("Mode must be either 'train', 'predict', 'evaluate'.")
+    if args.mode in ["predict", "evaluate"]:
         model_file = os.path.join(args.model_dir, "model.json")
         if not os.path.exists(model_file):
             raise FileNotFoundError("Model file not found.")
