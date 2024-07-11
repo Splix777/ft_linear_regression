@@ -1,10 +1,6 @@
-import json
 import os
 import unittest
 import warnings
-from unittest.mock import MagicMock, patch
-
-import pytest
 
 import numpy as np
 import pandas as pd
@@ -34,7 +30,11 @@ class TestLinearRegression(unittest.TestCase):
 
         if not os.path.exists(self.json):
             self.data_analysis = LinearRegressionModel()
-            self.data_analysis.load_data(self.data_path, self.x_feature, self.y_feature)
+            self.data_analysis.load_data(
+                self.data_path,
+                self.x_feature,
+                self.y_feature
+            )
             self.data_analysis.fit()
             self.data_analysis.save_model(self.json)
 

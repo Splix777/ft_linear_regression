@@ -1,13 +1,11 @@
 import json
 import logging
 import os
-from typing import Any
 
 import numpy as np
 import pandas as pd
 import tqdm
-from matplotlib import animation, pyplot as plt
-from numpy import ndarray, dtype
+from matplotlib import animation
 
 from srcs.plotter_class import PlottingClass
 
@@ -16,8 +14,9 @@ class LinearRegressionModel:
     """
     Class for training a linear regression model.
 
-    Includes methods for loading and preprocessing data, fitting the model, saving and loading the model,
-    making predictions, plotting data, calculating precision, and more.
+    Includes methods for loading and preprocessing data, fitting
+    the model, saving and loading the model, making predictions,
+    plotting data, calculating precision, and more.
     """
 
     def __init__(self, learning_rate: float = 0.01, iterations: int = 1500,
@@ -25,8 +24,10 @@ class LinearRegressionModel:
         """
         Initialize the training model with specified hyperparameters.
 
-        Initializes the training model with the given learning rate, number of iterations, stop threshold,
-        and bonus flag. Sets default values for other attributes like precision, paths, features, and theta.
+        Initializes the training model with the given learning rate,
+        number of iterations, stop threshold, and bonus flag. Sets
+        default values for other attributes like precision, paths,
+        features, and theta.
         """
         self.x_standardized = None
         self.mean_x = 0
@@ -43,12 +44,13 @@ class LinearRegressionModel:
         self.bonus = bonus
         self.theta = np.zeros(2)
 
-    def load_data(self, data_path: str, x_feature: str, y_feature: str) -> None:
+    def load_data(self, data_path: str, x_feature: str, y_feature: str):
         """
         Load and preprocess the training data.
 
-        Loads the data from a CSV file located at the specified path, extracts the specified
-        features for input (x_feature) and output (y_feature), and prepares the data for training.
+        Loads the data from a CSV file located at the specified path,
+        extracts the specified features for input (x_feature) and
+        output (y_feature), and prepares the data for training.
         """
         self.data_path = data_path
         self.x_feature = x_feature
@@ -64,13 +66,16 @@ class LinearRegressionModel:
         """
         Load and preprocess the training data.
 
-        Loads the data from a CSV file located at the specified path, removes any rows with missing
-        values or duplicates, and extracts the features and target values. If there is not enough
-        data to train the model, a ValueError is raised.
+        Loads the data from a CSV file located at the specified
+        path, removes any rows with missing values or duplicates,
+        and extracts the features and target values. If there is
+        not enough data to train the model, a ValueError is raised.
 
         Raises:
-            FileNotFoundError: If the CSV file at the specified path is not found.
-            ValueError: If there is not enough data to train the model or if a value error occurs during data processing.
+            FileNotFoundError: If the CSV file at the specified
+                path is not found.
+            ValueError: If there is not enough data to train the
+                model or if a value error occurs during data processing.
         """
         try:
             self.data = pd.read_csv(self.data_path)
@@ -104,11 +109,13 @@ class LinearRegressionModel:
         """
         Load the model parameters from a JSON file.
 
-        Loads the model parameters from a JSON file located at the specified path.
+        Loads the model parameters from a JSON file located
+        at the specified path.
         If the file is not found, a FileNotFoundError is raised.
 
         Raises:
-            FileNotFoundError: If the JSON file at the specified path is not found.
+            FileNotFoundError: If the JSON file at the
+                specified path is not found.
         """
         try:
             with open(self.json_path, 'r') as f:
@@ -121,7 +128,8 @@ class LinearRegressionModel:
         """
         Save the model to a JSON file.
 
-        Saves the model parameters (theta, mean_x, std_x) to a JSON file at the specified path.
+        Saves the model parameters (theta, mean_x, std_x) to
+        a JSON file at the specified path.
         """
         self.json_path = json_path
         self.__save_model()
@@ -130,8 +138,9 @@ class LinearRegressionModel:
         """
         Save the model parameters to a JSON file.
 
-        Saves the model parameters (theta, mean_x, std_x) to a JSON file at the specified path.
-        If the directory for the file does not exist, it creates the directory.
+        Saves the model parameters (theta, mean_x, std_x) to
+        a JSON file at the specified path. If the directory
+        for the file does not exist, it creates the directory.
         """
         try:
             if not os.path.exists(os.path.dirname(self.json_path)):
@@ -146,7 +155,8 @@ class LinearRegressionModel:
         """
         Save the training animation as a GIF.
 
-        Saves the training animation (ani) to a specified destination as a GIF file.
+        Saves the training animation (ani) to a specified
+        destination as a GIF file.
         """
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         dest = os.path.join(base_dir, 'srcs/training_animation.gif')
@@ -156,12 +166,14 @@ class LinearRegressionModel:
         """
         Normalize the features for training.
 
-        Calculates the mean and standard deviation of the features, then normalizes the features
-        by subtracting the mean and dividing by the standard deviation. If the standard deviation
+        Calculates the mean and standard deviation of the features,
+        then normalizes the features by subtracting the mean and
+        dividing by the standard deviation. If the standard deviation
         of the feature to predict is 0, a ZeroDivisionError is raised.
 
         Raises:
-            ZeroDivisionError: If the standard deviation of the feature to predict is 0.
+            ZeroDivisionError: If the standard deviation of the
+                feature to predict is 0.
         """
         self.x_mean = np.mean(self.x, axis=0)
         self.x_std = np.std(self.x, axis=0)
@@ -171,21 +183,29 @@ class LinearRegressionModel:
             self.x_standardized = (self.x - self.x_mean) / self.x_std
             self.y_standardized = (self.y - self.y_mean) / self.y_std
         except ZeroDivisionError as e:
-            raise ZeroDivisionError("Standard deviation of the feature to predict is 0") from e
+            raise ZeroDivisionError(
+                "Standard deviation of the feature to predict is 0") from e
 
-    def __initialize_progress_bar(self, message: str = '', total: int = 0) -> None:
+    def __initialize_progress_bar(self, message: str = '', total: int = 0):
         """
         Initialize the progress bar for training.
 
-        Creates and initializes a progress bar for tracking the training progress of the linear regression model.
+        Creates and initializes a progress bar for tracking the
+        training progress of the linear regression model.
         """
-        self.pbar = tqdm.tqdm(total=total, desc=message, position=0, leave=True)
+        self.pbar = tqdm.tqdm(
+            total=total,
+            desc=message,
+            position=0,
+            leave=True
+        )
 
     def fit(self, visualize: bool = False) -> None:
         """
         Fit the linear regression model.
 
-        Calls the private method __train_dataset() to train the linear regression model.
+        Calls the private method __train_dataset() to train
+        the linear regression model.
         """
         self.__standardize_features()
         self.__train_dataset(visualize)
@@ -194,8 +214,9 @@ class LinearRegressionModel:
         """
         Train the linear regression model with the dataset.
 
-        Performs the training of the linear regression model using the normalized dataset.
-        It iteratively updates the model parameters (theta) based on the gradient descent algorithm.
+        Performs the training of the linear regression model using
+        the normalized dataset. It iteratively updates the model
+        parameters (theta) based on the gradient descent algorithm.
         """
         self.costs = []
         self.theta0_history = []
@@ -211,10 +232,28 @@ class LinearRegressionModel:
             os.system('open training_animation.gif')
 
     def __animate_data(self):
+        """
+        Animate the data by creating a GIF animation
+        of the training process.
+
+        Args:
+            self: The instance of the class.
+
+        Returns:
+            None
+        """
         self.__de_standardize_theta_history()
-        self.__initialize_progress_bar('Creating the animation...', self.animation_epoch)
+        self.__initialize_progress_bar(
+            message='Creating the animation...',
+            total=self.animation_epoch
+        )
         self.plotter.initialize_plots()
-        self.ani = animation.FuncAnimation(self.plotter.fig, self.__create_gif, frames=self.animation_epoch, repeat=False)
+        self.ani = animation.FuncAnimation(
+            self.plotter.fig,
+            self.__create_gif,
+            frames=self.animation_epoch,
+            repeat=False
+        )
         self.__save_animation(self.ani)
         self.pbar.close()
         self.plotter.show()
@@ -223,9 +262,10 @@ class LinearRegressionModel:
         """
         Perform linear regression on the dataset.
 
-        Performs linear regression on the dataset by iteratively updating the model parameters (theta)
-        using the gradient descent algorithm. Updates the loss history and model parameter history,
-        and triggers plot updates during training.
+        Performs linear regression on the dataset by iteratively
+        updating the model parameters (theta) using the gradient
+        descent algorithm. Updates the loss history and model
+        parameter history, and triggers plot updates during training.
         """
         n = len(self.x_standardized)
         for i in range(self.iter):
@@ -241,12 +281,25 @@ class LinearRegressionModel:
 
             self.__save_update_values(self.theta[0], self.theta[1], cost)
 
-            if len(self.costs) > 1 and abs(self.costs[-1] - self.costs[-2]) < self.stop_threshold:
+            if (len(self.costs) > 1 and abs(self.costs[-1] - self.costs[-2])
+                    < self.stop_threshold):
                 self.animation_epoch = i
                 logging.info(f"Training stopped at epoch {i} with cost {cost}")
                 break
 
     def __save_update_values(self, gradient_theta0, gradient_theta1, cost):
+        """
+        Save the updated gradient values and cost during the training process.
+
+        Args:
+            self: The instance of the class.
+            gradient_theta0: The gradient value for theta0.
+            gradient_theta1: The gradient value for theta1.
+            cost: The cost value at the current iteration.
+
+        Returns:
+            None
+        """
         self.theta0_history.append(gradient_theta0)
         self.theta1_history.append(gradient_theta1)
         self.costs.append(cost)
@@ -256,11 +309,14 @@ class LinearRegressionModel:
         """
         Update the model parameters during training.
 
-        Calculates the hypothesis, error, and gradient for updating the model parameters (theta)
-        using the gradient descent algorithm. Updates the loss history and model parameter history,
+        Calculates the hypothesis, error, and gradient for updating
+        the model parameters (theta) using the gradient descent algorithm.
+        Updates the loss history and model parameter history,
         and triggers plot updates during training.
         """
-        theta = np.array([self.theta0_history[frame], self.theta1_history[frame]])
+        theta = np.array(
+            [self.theta0_history[frame], self.theta1_history[frame]]
+        )
         prediction = self.__hypothesis(theta, self.x)
         theta0 = self.theta0_history[:frame]
         theta1 = self.theta1_history[:frame]
@@ -273,12 +329,19 @@ class LinearRegressionModel:
         """
         De-standardize the model parameter history.
 
-        De-standardizes the model parameter history (theta0_history, theta1_history) after training
+        De-standardizes the model parameter history
+        (theta0_history, theta1_history) after training
         to get the correct values for the original dataset.
         """
-        de_standardized_theta1_history = np.array(self.theta1_history) * (self.y_std / self.x_std)
-        de_standardized_theta0_history = (np.array(self.theta0_history) * self.y_std) + self.y_mean - (
-                np.array(self.theta1_history) * self.x_mean * self.y_std / self.x_std)
+        de_standardized_theta1_history = (np.array(self.theta1_history)
+                                          * (self.y_std / self.x_std))
+        de_standardized_theta0_history = (np.array(self.theta0_history)
+                                          * self.y_std) + self.y_mean - (
+                np.array(self.theta1_history)
+                * self.x_mean
+                * self.y_std
+                / self.x_std
+        )
         self.theta0_history = de_standardized_theta0_history
         self.theta1_history = de_standardized_theta1_history
 
@@ -287,16 +350,18 @@ class LinearRegressionModel:
         """
         Calculate the hypothesis for linear regression.
 
-        Calculates the hypothesis values based on the model parameters (theta) and input features (x).
+        Calculates the hypothesis values based on the model
+        parameters (theta) and input features (x).
         """
         return theta[0] + theta[1] * x
 
     @staticmethod
-    def __cost_function(prediction: np.ndarray, y: np.ndarray, n: int) -> float:
+    def __cost_function(prediction: np.ndarray, y: np.ndarray, n: int):
         """
         Calculate the cost function for linear regression.
 
-        Calculates the cost function value based on the hypothesis values and actual target values.
+        Calculates the cost function value based on the hypothesis
+        values and actual target values.
         """
         return np.sum((y - prediction) ** 2) / n
 
@@ -304,14 +369,22 @@ class LinearRegressionModel:
         """
         De-standardize the model parameters.
 
-        De-standardizes the model parameters (theta) after training to get the correct values
-        for the original dataset.
+        De-standardizes the model parameters (theta) after
+        training to get the correct values for the original dataset.
         """
         theta0_standardized = self.theta[0]
         theta1_standardized = self.theta[1]
 
-        de_standardized_theta1 = theta1_standardized * (self.y_std / self.x_std)
-        de_standardized_theta0 = (theta0_standardized * self.y_std) + self.y_mean - (theta1_standardized * self.x_mean * self.y_std / self.x_std)
+        de_standardized_theta1 = (theta1_standardized
+                                  * (self.y_std / self.x_std))
+        de_standardized_theta0 = ((theta0_standardized
+                                  * self.y_std)
+                                  + self.y_mean
+                                  - (theta1_standardized
+                                     * self.x_mean
+                                     * self.y_std
+                                     / self.x_std
+                                     ))
 
         self.theta = np.array([de_standardized_theta0, de_standardized_theta1])
 
@@ -319,11 +392,15 @@ class LinearRegressionModel:
         """
         Predict the target values using the linear regression model.
 
-        Given a list of input values (x), predicts the target values using the trained linear regression model.
-        If the model has not been loaded, it loads the model from a JSON file before making predictions.
+        Given a list of input values (x), predict the target values
+        using the trained linear regression model.
+        If the model has not been loaded, it loads the model from a
+        JSON file before making predictions.
         Returns a list of predicted target values.
+
         Raises:
-            ValueError: If the input values are not in the correct format or if there is an issue loading the model.
+            ValueError: If the input values are not in the correct
+                format or if there is an issue loading the model.
         """
         if not isinstance(estimate, int):
             raise ValueError("Please enter a numerical value for mileage.")
@@ -340,8 +417,10 @@ class LinearRegressionModel:
         """
         Plot the residuals of the linear regression model.
 
-        Calculates the residuals by comparing the actual target values (y) with the predicted values
-        from the model. Plots the residuals against the input features (x) for visualization.
+        Calculates the residuals by comparing the actual target
+        values (y) with the predicted values from the model.
+        Plots the residuals against the input features (x)
+        for visualization.
         """
         prediction = self.__hypothesis(self.theta, self.x)
         residuals = prediction - self.y
@@ -351,17 +430,26 @@ class LinearRegressionModel:
         """
         Plot the data points and the linear regression model.
 
-        Calculates the hypothesis values using the model parameters and input features, then plots
-        the actual data points along with the linear regression model's predictions for visualization.
+        Calculates the hypothesis values using the model
+        parameters and input features, then plots the actual data
+        points along with the linear regression model's predictions
+        for visualization.
         """
         hypothesis = self.__hypothesis(self.theta, self.x)
-        self.plotter.plot_data(self.x, self.y, hypothesis, self.x_feature, self.y_feature)
+        self.plotter.plot_data(
+            self.x,
+            self.y,
+            hypothesis,
+            self.x_feature,
+            self.y_feature
+        )
 
     def plot_cost(self) -> None:
         """
         Plot the cost function over the training iterations.
 
-        Plots the cost function values over the training iterations to visualize the convergence of the model.
+        Plots the cost function values over the training iterations
+        to visualize the convergence of the model.
         """
         self.plotter.plot_cost(self.costs)
 
@@ -369,14 +457,17 @@ class LinearRegressionModel:
         """
         Calculate the precision metrics of the linear regression model.
 
-        Calculates and prints the Mean Absolute Error (MAE), Mean Squared Error (MSE), and R-squared (R²)
-        values to evaluate the model's performance. Updates the precision attribute with the R-squared value
+        Calculates and prints the Mean Absolute Error (MAE),
+        Mean Squared Error (MSE), and R-squared (R²)
+        values to evaluate the model's performance. Updates the
+        precision attribute with the R-squared value
         multiplied by 100 to represent the model's precision percentage.
         """
         prediction = self.__hypothesis(self.theta, self.x)
         mae = np.mean(np.abs(prediction - self.y))
         mse = np.mean((prediction - self.y) ** 2)
-        r_squared = 1 - (np.sum((prediction - self.y) ** 2) / np.sum((self.y - np.mean(self.y)) ** 2))
+        r_squared = 1 - (np.sum((prediction - self.y) ** 2)
+                         / np.sum((self.y - np.mean(self.y)) ** 2))
         self.precision = r_squared * 100
 
         print(f"Mean Absolute Error (MAE): {mae}")
@@ -392,10 +483,13 @@ class LinearRegressionModel:
 
 def premade_data() -> None:
     """
-    Prepare and train the linear regression model with predefined data.
+    Prepare and train the linear regression model
+    with predefined data.
 
-    Loads predefined data from a CSV file, sets up the model with specified hyperparameters,
-    trains the model, and optionally saves the model, calculates precision metrics, and plots data.
+    Loads predefined data from a CSV file, sets up the
+    model with specified hyperparameters, trains the model,
+    and optionally saves the model, calculates precision
+    metrics, and plots data.
     """
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     data_path = os.path.join(base_dir, 'csv_files/data.csv')
@@ -407,9 +501,17 @@ def premade_data() -> None:
     x_feature = 'km'
     y_feature = 'price'
 
-    model = LinearRegressionModel(learning_rate=learning_rate, iterations=iterations, stop_threshold=stop_threshold,
-                                  bonus=bonus)
-    model.load_data(data_path=data_path, x_feature=x_feature, y_feature=y_feature)
+    model = LinearRegressionModel(
+        learning_rate=learning_rate,
+        iterations=iterations,
+        stop_threshold=stop_threshold,
+        bonus=bonus
+    )
+    model.load_data(
+        data_path=data_path,
+        x_feature=x_feature,
+        y_feature=y_feature
+    )
     model.fit(visualize=False)
     model.save_model(json_path=json_path)
     model.plot_data()

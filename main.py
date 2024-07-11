@@ -14,7 +14,8 @@ def main():
     base_dir = os.path.dirname(os.path.abspath(__file__))
     pickle_path = os.path.join(base_dir, "json_files/model.pkl")
     if not os.path.exists(pickle_path):
-        user_input = input("No model found. Would you like to train a new model? (y/n): ")
+        user_input = input("No model found. Would you like to "
+                           "train a new model? (y/n): ")
         if user_input.lower() == 'y':
             print("Training model. This may take a while.")
             premade_data()
