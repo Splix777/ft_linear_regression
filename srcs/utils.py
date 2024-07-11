@@ -44,6 +44,10 @@ def verify_args(args: argparse.Namespace) -> tuple[str, str, str, bool]:
         if not os.path.exists(model_file):
             raise FileNotFoundError("Model file not found.")
 
+    # Check optional arguments
+    if bool(args.target) != bool(args.pred):
+        raise ValueError("Both 'target' and 'pred' must be provided together.")
+
     return args.csv_path, args.model_dir, args.mode, args.bonus
 
 

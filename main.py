@@ -9,7 +9,7 @@ def train_or_predict(model, mode):
         model.fit()
         response = input("Do you want to evaluate the model? (y/n): ")
         if response.lower() == "y":
-            print(model.evaluate())
+            model.evaluate()
     elif mode == "predict":
         response = input("Enter a value to predict: ")
         model.load_model()
@@ -17,13 +17,15 @@ def train_or_predict(model, mode):
         print(f"The predicted value is: ${prediction:.2f}")
     elif mode == "evaluate":
         model.load_model()
-        print(model.evaluate())
+        model.evaluate()
 
 
 def main():
     args = argparse.ArgumentParser()
     args.add_argument("--csv_path", type=str, required=True)
     args.add_argument("--model_dir", type=str, required=True)
+    args.add_argument("--target", type=str, required=False)
+    args.add_argument("--pred", type=str, required=False)
     args.add_argument("--mode", type=str, required=True)
     args.add_argument("--bonus", action="store_true")
     args = args.parse_args()
@@ -32,7 +34,9 @@ def main():
     model = LinearRegressionModel(
         csv_path=csv_path,
         model_dir=model_dir,
-        bonus=bonus
+        bonus=bonus,
+        target=args.target or "price",
+        pred=args.pred or "km",
     )
     train_or_predict(model, mode)
 

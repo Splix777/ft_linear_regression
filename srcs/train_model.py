@@ -223,7 +223,7 @@ class LinearRegressionModel:
         r2 = 1 - (np.sum(error ** 2) / np.sum(
             (self.data[self.target] - np.mean(self.data[self.target])) ** 2))
 
-        return (
+        print(
             f"Mean Absolute Error: {mae:.2f}\n"
             f"Mean Squared Error: {mse:.2f}\n"
             f"Root Mean Squared Error: {rmse:.2f}\n"
