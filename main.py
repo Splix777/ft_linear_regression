@@ -61,11 +61,15 @@ def main():
                       help="Run the bonus part of the model. (default: False)")
     args = args.parse_args()
 
-    csv_path, model_dir, mode, bonus = verify_args(args)
+    csv_path, model_dir, mode, bonus = verify_args(args=args)
     model = LinearRegressionModel(
         csv_path=csv_path,
         model_dir=model_dir,
         bonus=bonus,
+        learn_rate=0.01,
+        loss_thresh=1e-6,
+        epochs=1000,
+        patience=10,
         target=args.target or "price",
         pred=args.pred or "km",
     )

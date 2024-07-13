@@ -7,32 +7,28 @@ import pandas as pd
 
 from tqdm import tqdm
 from matplotlib import animation
-from dataclasses import dataclass, field
 
 from srcs.plotter_class import PlottingClass
 
 
-@dataclass
 class LinearRegressionModel:
-    """
-    Dataclass to store the linear regression model.
-    """
-    csv_path: str
-    model_dir: str
-    bonus: bool
+    def __init__(self, csv_path: str, model_dir: str, **kwargs):
+        self.csv_path: str = csv_path
+        self.model_dir: str = model_dir
+        self.bonus: bool = kwargs.get("bonus", False)
 
-    learn_rate: float = field(default=0.01)
-    loss_thresh: float = field(default=1e-9)
-    epochs: int = field(default=5_000)
-    patience: int = field(default=10)
-    slope: float = field(default=0)
-    intercept: float = field(default=0)
-    loss: list = field(default_factory=list)
-    history: dict = field(default_factory=dict)
-    original_data: pd.DataFrame = field(default=None)
+        self.learn_rate: float = kwargs.get("learn_rate", 0.01)
+        self.loss_thresh: float = kwargs.get("loss_thresh", 1e-6)
+        self.epochs: int = kwargs.get("epochs", 1000)
+        self.patience: int = kwargs.get("patience", 10)
+        self.target: str = kwargs.get("target", "price")
+        self.pred: str = kwargs.get("pred", "km")
 
-    target: str = "price"
-    pred: str = "km"
+        self.slope: float = 0
+        self.intercept: float = 0
+        self.loss: list = []
+        self.history: dict = {}
+        self.original_data = None
 
     def _load_data(self):
         """
@@ -85,6 +81,10 @@ class LinearRegressionModel:
 
         except FileNotFoundError as e:
             raise FileNotFoundError("Model file not found.") from e
+        except TypeError as e:
+            raise TypeError("Model file is empty.") from e
+        except KeyError as e:
+            raise KeyError("Model file is missing keys.") from e
         except Exception as e:
             raise e
 
