@@ -66,9 +66,10 @@ def verify_prediction_request(response: str) -> float:
     """
     try:
         number = float(response)
-        if 0 > number <= 2_000_000:
-            raise ValueError("Prediction must be between 0 and 2,000,000.")
-        return number
-
     except ValueError as e:
-        raise ValueError("Prediction request must be a number.") from e
+        raise ValueError("Prediction request must be a number") from e
+
+    if number < 0 or number > 2_000_000:
+        raise ValueError("Prediction must be between 0 and 2,000,000.")
+
+    return number

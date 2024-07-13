@@ -22,7 +22,7 @@ class LinearRegressionModel:
     bonus: bool
 
     learn_rate: float = field(default=0.01)
-    loss_thresh: float = field(default=1e-6)
+    loss_thresh: float = field(default=1e-9)
     epochs: int = field(default=5_000)
     patience: int = field(default=10)
     slope: float = field(default=0)
