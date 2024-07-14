@@ -3,12 +3,12 @@ import json
 import time
 import logging
 import numpy as np
-import pandas as pd
 
 from tqdm import tqdm
 from matplotlib import animation
 
-from srcs.plotter_class import PlottingClass
+from srcs.plotter.plotter import PlottingClass
+from srcs.utils.utils import verify_project_csv
 
 
 class LinearRegressionModel:
@@ -34,15 +34,7 @@ class LinearRegressionModel:
         """
         Load the data from the csv file.
         """
-        try:
-            self.data = pd.read_csv(self.csv_path)
-            if self.data.shape[1] != 2:
-                raise ValueError("Data must have only 2 columns.")
-
-        except FileNotFoundError as e:
-            raise FileNotFoundError("Data file not found.") from e
-        except Exception as e:
-            raise e
+        self.data = verify_project_csv(self.csv_path)
 
     def _save_model(self):
         """
@@ -160,7 +152,7 @@ class LinearRegressionModel:
         self._save_model()
 
         if self.bonus:
-            self.plot()
+            self._plot()
 
     def predict(self, x):
         """
@@ -233,7 +225,7 @@ class LinearRegressionModel:
             f"Slope: {self.slope:.4f}\n"
         )
 
-    def plot(self):
+    def _plot(self):
         """
         Plot the linear regression model.
         """

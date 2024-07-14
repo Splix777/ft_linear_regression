@@ -56,7 +56,7 @@ class PlottingClass:
 
         # Plot for data points and regression line
         self.ax1.scatter(self.x_feature, self.y_feature, color='blue')
-        self.line1, = self.ax1.plot(
+        self.line1, = self.ax1._plot(
             self.x_feature,
             np.zeros_like(self.x_feature), 'r-'
         )
@@ -67,21 +67,21 @@ class PlottingClass:
         self.ax1.grid(True)
 
         # Plot for Intercept values
-        self.intercept_vals, = self.ax2.plot([], [], 'b-', label='Intercept')
+        self.intercept_vals, = self.ax2._plot([], [], 'b-', label='Intercept')
         self.ax2.set_xlabel('Iteration')
         self.ax2.set_ylabel('Theta 0 Value')
         self.ax2.set_title('Theta 0 Values over Iterations')
         self.ax2.grid(True)
 
         # Plot for Slope values
-        self.slope_vals, = self.ax3.plot([], [], 'r-', label='Slope')
+        self.slope_vals, = self.ax3._plot([], [], 'r-', label='Slope')
         self.ax3.set_xlabel('Iteration')
         self.ax3.set_ylabel('Theta 1 Value')
         self.ax3.set_title('Theta 1 Values over Iterations')
         self.ax3.grid(True)
 
         # Plot for Cost function values
-        self.loss_vals, = self.ax4.plot([], [], 'g-', label='Cost Function')
+        self.loss_vals, = self.ax4._plot([], [], 'g-', label='Cost Function')
         self.ax4.set_xlabel('Iteration')
         self.ax4.set_ylabel('Cost')
         self.ax4.set_title('Cost Function over Iterations')
